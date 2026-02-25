@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>MSB — Dashboard Live</title>
+  <style>
+    body{font-family:system-ui;margin:0;padding:16px;background:#f6f2e7}
+    .top{display:flex;gap:12px;flex-wrap:wrap}
+    .card{background:white;border:1px solid #ddd;border-radius:14px;padding:12px;min-width:220px}
+    .list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+    .row{background:white;border:1px solid #ddd;border-radius:14px;padding:10px}
+    .muted{opacity:.7;font-size:12px}
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #ccc;font-weight:700}
+  </style>
+</head>
+<body>
+  <h2>🍔 MSB — Live</h2>
+
+  <div class="top">
+    <div class="card"><div class="muted">Commandes affichées</div><div id="count" style="font-size:28px;font-weight:800">0</div></div>
+    <div class="card"><div class="muted">CA affiché</div><div id="ca" style="font-size:28px;font-weight:800">0,00€</div></div>
+    <div class="card"><div class="muted">Dernière MAJ</div><div id="last" style="font-weight:800">—</div></div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+<script>
+const LIVE_URL = "https://script.google.com/macros/s/AKfycbyo1mKET4MrkJGu6e-G-n2ZmxFQj2phNS7gi1CsvneIyXeeipuCzKF4WqJWC1qgNxd42Q/exec";
+const euro = (n)=> (Number(n)||0).toLocaleString("fr-FR",{style:"currency",currency:"EUR"});
+
+async function load(){
+  const res = await fetch(LIVE_URL + "?limit=80");
+  const data = await res.json();
+  const orders = data.orders || [];
+
+  document.getElementById("count").textContent = orders.length;
+  document.getElementById("ca").textContent = euro(orders.reduce((s,o)=>s+Number(o.total||0),0));
+  document.getElementById("last").textContent = new Date().toLocaleTimeString("fr-FR");
+
+  const wrap = document.getElementById("list");
+  wrap.innerHTML = "";
+  orders.forEach(o=>{
+    const div = document.createElement("div");
+    div.className = "row";
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div><strong>#${o.num}</strong> <span class="muted">${o.ts}</span></div>
+        <div><span class="badge">${o.status}</span> <strong>${euro(o.total)}</strong></div>
+      </div>
+      <div class="muted">Paiement: ${o.payment} · Items: ${o.itemsCount} · ${o.paid ? "✅ Encaissé" : "💵 Non encaissé"}</div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+load();
+setInterval(load, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,3255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <link rel="icon" href="logoLMSB.jpg" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Le Mont Smash Burger — Prise de commande</title>
+
+  <style>
+    :root{
+      --bg:#f3e5c9;
+      --card:#fff6e6;
+      --ink:#1b1b1b;
+      --muted:#5a4b3c;
+      --green:#1f5b47;
+      --green2:#134233;
+      --gold:#c48a3a;
+      --line:rgba(27,27,27,.18);
+      --danger:#b42318;
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    *{-webkit-tap-highlight-color: transparent;}
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(31,91,71,.10), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(196,138,58,.12), transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+      letter-spacing:.2px;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    *{
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    .wrap{max-width:1150px;margin:0 auto;padding:12px 12px 24px}
+
+    /* ===== Tabs ===== */
+    .tabs{
+      display:flex; gap:10px;
+      padding:12px;
+      position:sticky; top:0; z-index:20;
+      background:rgba(243,229,201,.98);
+      border-bottom: 1px solid rgba(27,27,27,.10);
+      align-items:center;
+    }
+    .tabbtn{
+      flex:1;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(31,91,71,.25);
+      background:linear-gradient(180deg, rgba(255,246,230,.95), rgba(255,246,230,.85));
+      font-weight:1000;
+      color:var(--green2);
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      transition:none;
+      user-select:none;
+    }
+    .tabbtn:active{ transform:none; }
+    .tabbtn.active{
+      background:linear-gradient(180deg, var(--green), var(--green2));
+      border-color: var(--green2);
+      color:#fff;
+      box-shadow: 0 14px 34px rgba(0,0,0,.14);
+    }
+
+    .rushToggle{
+      flex:0;
+      min-width: 120px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(196,138,58,.35);
+      background: rgba(196,138,58,.14);
+      color:#7a4d12;
+      font-weight:1100;
+      cursor:pointer;
+      user-select:none;
+      transition:none;
+    }
+    .rushToggle.active{
+      background: linear-gradient(180deg, rgba(196,138,58,.92), rgba(162,114,46,.95));
+      border-color: rgba(162,114,46,.95);
+      color:#fff;
+      box-shadow: 0 14px 34px rgba(0,0,0,.14);
+    }
+
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:980px){ .grid{grid-template-columns: 1.02fr .98fr;} }
+
+    /* ===== Cards / Boxes ===== */
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+      transition:none;
+    }
+    .card h2{margin:0 0 10px; font-size:15px; color:var(--green2)}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+
+    label{font-size:12px;color:var(--muted);font-weight:900;display:block;margin-bottom:4px}
+    select,input,textarea{
+      width:100%; padding:12px; border-radius:16px;
+      border:1px solid rgba(27,27,27,.22);
+      background: rgba(255,255,255,.85);
+      font-size:15px; outline:none;
+      transition:none;
+    }
+    select:focus,input:focus,textarea:focus{
+      border-color: rgba(31,91,71,.35);
+      box-shadow: 0 0 0 4px rgba(31,91,71,.12);
+    }
+
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button{ -webkit-appearance: none; margin:0; }
+    input[type=number]{ -moz-appearance: textfield; appearance: textfield; }
+
+    .col2{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:540px){ .col2{grid-template-columns:1fr 1fr;} }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+    .pill{
+      display:inline-flex;gap:10px;align-items:center;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(31,91,71,.25);
+      background:rgba(31,91,71,.08);
+      color:var(--green2); font-weight:1000; font-size:13px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
+    .money{font-weight:1000;color:var(--green2)}
+    .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+    button{
+      border:1px solid rgba(31,91,71,.25);
+      background: rgba(255,255,255,.65);
+      color:var(--green2); padding:12px;
+      border-radius:16px; font-weight:1000; cursor:pointer;
+      transition:none;
+      user-select:none;
+    }
+    button:disabled{opacity:.45;cursor:not-allowed}
+    button:active{ transform:none; }
+
+    .primary{ background: var(--green); border-color: var(--green2); color:#fff; }
+    .danger{ background: rgba(180,35,24,.1); border-color: rgba(180,35,24,.3); color: var(--danger); }
+    .edit-btn{ background: var(--gold); border-color: #a3722e; color: white; }
+    .gift-btn{ background: rgba(196,138,58,.16); border-color: rgba(196,138,58,.35); color:#7a4d12; }
+
+    .list{display:flex;flex-direction:column;gap:10px}
+    .box{
+      border:1px solid var(--line); border-radius:18px;
+      padding:12px; background: rgba(255,255,255,.70);
+      transition:none;
+      animation:none;
+    }
+
+    .boxTitle{font-weight:1000;color:var(--green2);font-size:14px}
+    .boxMeta{font-size:12px;color:var(--muted);font-weight:900;margin-top:4px}
+    .bigRecap{font-size:15px; font-weight:1000; line-height:1.45; margin-top:6px}
+
+    .qty{
+      display:flex;align-items:center;gap:8px;
+      border:1px solid rgba(31,91,71,.25);
+      background: rgba(31,91,71,.06);
+      padding:6px 10px; border-radius:999px;
+    }
+    .qty strong{min-width:22px;text-align:center;font-weight:1000}
+    .qty button{ padding:6px 10px; border-radius:12px; font-weight:1000; }
+
+    .tag{
+      display:inline-flex; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); font-size:11px; font-weight:1000;
+      background: rgba(255,255,255,.80);
+      align-items:center;
+      gap:6px;
+    }
+    .tag.warn{background:#fff3e0; color:#e65100}
+    .tag.ok{background:#e8f5e9; color:#2e7d32}
+    .tag.cancel{background:#ffebee; color:#b42318}
+    .tag.gift{background:#fff8e1; color:#7a4d12; border-color: rgba(196,138,58,.35);}
+    .tag.giftline{background:#fff8e1; color:#7a4d12; border-color: rgba(196,138,58,.35);}
+
+    .payBox{
+      border:1px dashed rgba(27,27,27,.25);
+      border-radius:16px;
+      padding:10px;
+      background: rgba(255,255,255,.55);
+    }
+    .payLine{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+    .payLine > div{flex:1; min-width:160px}
+
+    .calcBox{
+      font-weight:1000;
+      color:var(--green2);
+      background: rgba(31,91,71,.08);
+      border:1px solid rgba(31,91,71,.18);
+      padding:10px 12px;
+      border-radius:14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+    @media(max-width:540px){.stat-grid{grid-template-columns:1fr}}
+    .miniGrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    @media(min-width:980px){.miniGrid{grid-template-columns:1fr 1fr}}
+    .topList{margin:0;padding-left:18px}
+    .topList li{margin:6px 0;font-weight:1000;color:var(--green2)}
+    .small{font-size:12px;color:var(--muted);font-weight:900}
+
+    /* ===== Header ===== */
+    .heroHeader{
+      background: linear-gradient(135deg, #f3e5c9 0%, #e8d7b5 100%);
+      padding: 26px 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.12);
+      position:relative;
+      overflow:hidden;
+    }
+    .heroContent{
+      display:flex; align-items:center; justify-content:center;
+      gap:28px; flex-wrap:wrap;
+      position:relative; z-index:1;
+      text-align:center;
+    }
+    .logoWrapper{
+      background:white;
+      padding:16px;
+      border-radius:26px;
+      box-shadow: 0 25px 60px rgba(0,0,0,.2);
+      position:relative;
+      overflow:hidden;
+    }
+    .logoWrapper img{
+      width:150px; height:150px;
+      object-fit:contain; display:block;
+      position:relative; z-index:1;
+    }
+    .brandBlock{display:flex;flex-direction:column;align-items:center;gap:12px}
+    .brandBlock h1{
+      margin:0; font-size:30px; font-weight:1100;
+      letter-spacing:2px; color:var(--green2);
+      text-transform:uppercase;
+    }
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      background:var(--green); color:white;
+      padding:8px 16px; border-radius:999px;
+      font-weight:1000; font-size:14px;
+      box-shadow:0 8px 20px rgba(0,0,0,.15);
+    }
+
+    @media(max-width:700px){
+      .heroContent{flex-direction:column;gap:18px}
+      .logoWrapper img{width:120px;height:120px}
+      .brandBlock h1{font-size:22px;letter-spacing:1px}
+    }
+
+    @media(max-width:1024px){
+      .wrap{max-width:980px}
+      select,input,textarea{font-size:14px;padding:11px}
+      button{padding:11px}
+      .card{padding:12px}
+    }
+
+    @media (max-width: 980px){
+      #rightPanel{
+        position: static !important;
+        top: auto !important;
+        align-self: auto !important;
+      }
+      .tabs{ padding:10px; gap:8px; }
+      .tabbtn{ padding:12px 10px; }
+      .rushToggle{ padding:12px 10px; min-width:110px; }
+    }
+
+    .totalBig{
+      border:1px solid rgba(31,91,71,.18);
+      background: rgba(31,91,71,.08);
+      border-radius:18px;
+      padding:10px 12px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-weight:1100;
+    }
+    .totalBig .money{ font-size:18px; }
+
+    .view{ opacity:1; transform:none; transition:none; will-change:auto; }
+
+    /* Toast */
+    .toast{
+      background: rgba(19,66,51,.92);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:16px;
+      padding:12px 14px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.22);
+      font-weight:1000;
+      display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
+    }
+    .toast small{ opacity:.85; font-weight:900; display:block; margin-top:2px; }
+    .toast .x{
+      background: transparent; color:#fff; border:none; padding:0; cursor:pointer;
+      font-size:16px; line-height:1; opacity:.9;
+    }
+    .toast.warn{ background: rgba(196,138,58,.92); }
+    .toast.bad{ background: rgba(180,35,24,.92); }
+
+    #confettiCanvas{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      z-index:9998;
+      pointer-events:none;
+    }
+
+    #casinoOverlay{
+      position:fixed;
+      inset:0;
+      z-index:9997;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(15,18,16,.65);
+      padding:18px;
+    }
+    .casinoCard{
+      width:min(680px, 100%);
+      background: rgba(255,246,230,.98);
+      border:1px solid rgba(31,91,71,.22);
+      border-radius: 26px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.28);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+      text-align:center;
+    }
+    .casinoTitle{ font-weight:1100; color:var(--green2); font-size:16px; letter-spacing:.6px; text-transform:uppercase; margin:0; }
+    .casinoGain{ margin:10px 0 6px; font-size:52px; font-weight:1200; color: var(--green2); }
+    .casinoSub{ margin:0 0 12px; font-weight:1000; color: rgba(19,66,51,.9); }
+    .casinoBtns{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+
+    /* ===== Boutons paiement ===== */
+    .payMethods{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .payBtn{
+      flex:1;
+      min-width:140px;
+      padding:12px;
+      border-radius:16px;
+      font-weight:1000;
+      border:1px solid rgba(31,91,71,.25);
+      background: rgba(255,255,255,.65);
+      color: var(--green2);
+    }
+    .payBtn.active{
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      border-color: var(--green2);
+      color:#fff;
+      box-shadow: 0 14px 34px rgba(0,0,0,.14);
+    }
+
+    /* ===== Mini claviers (popover) ===== */
+    #kbdPopover{
+      position: fixed;
+      z-index: 9999;
+      display: none;
+      width: min(360px, calc(100vw - 18px));
+      background: rgba(255,246,230,.98);
+      border:1px solid rgba(31,91,71,.22);
+      border-radius: 18px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.22);
+      padding:10px;
+      transform-origin: top left;
+    }
+    #kbdTitle{
+      font-weight:1100;
+      color:var(--green2);
+      font-size:12px;
+      margin: 0 0 8px;
+    }
+    #kbdPreview{
+      font-weight:1200;
+      font-size:16px;
+      color:var(--green2);
+      background: rgba(31,91,71,.08);
+      border:1px solid rgba(31,91,71,.18);
+      border-radius:14px;
+      padding:8px 10px;
+      min-height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      margin-bottom:8px;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow: ellipsis;
+    }
+    #kbdKeys{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .kbdRow{
+      display:flex;
+      gap:6px;
+      justify-content:center;
+      flex-wrap:nowrap;
+    }
+    .kbdKey{
+      padding:10px 8px;
+      border-radius:14px;
+      font-weight:1100;
+      font-size:13px;
+      flex: 1;
+      min-width: 0;
+      text-align:center;
+    }
+    .kbdKey.wide{ flex: 1.6; }
+    .kbdKey.xwide{ flex: 2.0; }
+    .kbdActions{
+      display:flex;
+      gap:8px;
+      margin-top:8px;
+    }
+    .kbdActions button{ flex:1; padding:10px; border-radius:14px; }
+
+    @media(max-width:420px){
+      #kbdPopover{ width: calc(100vw - 18px); }
+      .kbdKey{ padding:9px 6px; font-size:12px; }
+    }
+
+    /* ===== Amélioration visuelle mini todo ===== */
+    .miniDashBottom{
+      margin-top: 14px;
+      padding: 0;
+      overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,246,230,.98), rgba(255,246,230,.92));
+    }
+    .miniDash{ padding: 14px; }
+    .miniDash h2{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .miniDash h2::after{
+      content:"Live";
+      font-size:11px;
+      font-weight:1100;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(31,91,71,.20);
+      background: rgba(31,91,71,.08);
+      color: var(--green2);
+    }
+    .miniTodoGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media(min-width:980px){
+      .miniTodoGrid{ grid-template-columns: 1fr 1fr; }
+    }
+    .miniItem{
+      position:relative;
+      border:1px solid rgba(27,27,27,.14);
+      border-radius:18px;
+      background: rgba(255,255,255,.72);
+      padding:12px 12px 12px 12px;
+      overflow:hidden;
+      box-shadow: 0 10px 26px rgba(0,0,0,.08);
+    }
+    .miniItem::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background: linear-gradient(180deg, rgba(31,91,71,.95), rgba(196,138,58,.85));
+      opacity:.95;
+    }
+    .miniTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:1100;
+      color: var(--green2);
+      padding-left: 6px;
+    }
+    .miniChips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+      padding-left: 6px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(31,91,71,.18);
+      background: rgba(31,91,71,.08);
+      color: var(--green2);
+      font-weight:1100;
+      font-size:11px;
+    }
+    .chip.warn{
+      border-color: rgba(196,138,58,.35);
+      background: rgba(196,138,58,.16);
+      color:#7a4d12;
+    }
+    .miniLines{
+      margin-top:10px;
+      padding-left: 6px;
+      font-weight:1000;
+      color: rgba(19,66,51,.92);
+      line-height:1.35;
+      font-size:13px;
+    }
+    .muted{
+      margin-top:8px;
+      padding-left: 6px;
+      font-size:12px;
+      font-weight:900;
+      color: rgba(90,75,60,.95);
+    }
+    .miniProgress{
+      margin-top:10px;
+      height:8px;
+      border-radius:999px;
+      background: rgba(19,66,51,.10);
+      overflow:hidden;
+      border:1px solid rgba(31,91,71,.10);
+      margin-left:6px;
+    }
+    .miniProgress > span{
+      display:block;
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(31,91,71,.95), rgba(196,138,58,.90));
+    }
+
+    /* ===== MODE RUSH ===== */
+    body.rush .hideInRush{ display:none !important; }
+
+    .rushPanelTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .rushBadge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(196,138,58,.35);
+      background: rgba(196,138,58,.16);
+      color:#7a4d12;
+      font-weight:1100;
+      font-size:12px;
+    }
+
+    .rushModes{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .rushModeBtn{
+      flex:1;
+      min-width:150px;
+      padding:14px;
+      border-radius:18px;
+      font-weight:1200;
+      border:1px solid rgba(31,91,71,.22);
+      background: rgba(255,255,255,.70);
+      color: var(--green2);
+    }
+    .rushModeBtn.active{
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      border-color: var(--green2);
+      color:#fff;
+      box-shadow: 0 14px 34px rgba(0,0,0,.14);
+    }
+
+    .rushDrinkRow{
+      margin-top:10px;
+      padding:10px;
+      border-radius:18px;
+      border:1px dashed rgba(31,91,71,.22);
+      background: rgba(31,91,71,.06);
+      display:none;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .rushDrinkRow .label{
+      font-weight:1100;
+      color:var(--green2);
+      font-size:12px;
+      flex:1;
+      min-width:160px;
+    }
+    .rushDrinkBtns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      flex:2;
+      min-width:220px;
+    }
+    .rushDrinkBtn{
+      flex:1;
+      min-width:120px;
+      padding:12px;
+      border-radius:16px;
+      font-weight:1100;
+      border:1px solid rgba(31,91,71,.22);
+      background: rgba(255,255,255,.75);
+      color: var(--green2);
+    }
+    .rushDrinkBtn.active{
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      border-color: var(--green2);
+      color:#fff;
+      box-shadow: 0 10px 26px rgba(0,0,0,.12);
+    }
+    .rushSodaPick{
+      flex:1;
+      min-width:180px;
+      display:none;
+    }
+
+    /* ✅ Normal mode : boutons boisson (réutilise le style rushDrinkBtn) */
+    .normalDrinkRow{
+      margin-top:10px;
+      padding:10px;
+      border-radius:18px;
+      border:1px dashed rgba(31,91,71,.22);
+      background: rgba(31,91,71,.06);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .normalDrinkRow .label{
+      font-weight:1100;
+      color:var(--green2);
+      font-size:12px;
+      flex:1;
+      min-width:160px;
+    }
+
+    .rushGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media(min-width:540px){ .rushGrid{ grid-template-columns: 1fr 1fr; } }
+    @media(min-width:980px){ .rushGrid{ grid-template-columns: 1fr 1fr 1fr; } }
+
+    .rushBurgerBtn{
+      padding:16px;
+      border-radius:20px;
+      font-weight:1200;
+      border:1px solid rgba(31,91,71,.22);
+      background: rgba(255,255,255,.78);
+      text-align:left;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .rushBurgerBtn small{
+      display:block;
+      font-weight:900;
+      color: rgba(90,75,60,.95);
+      margin-top:4px;
+    }
+    .rushBurgerBtn .plus{
+      background: rgba(31,91,71,.10);
+      border:1px solid rgba(31,91,71,.18);
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:1200;
+      color: var(--green2);
+      flex:0;
+      white-space:nowrap;
+    }
+    .rushBurgerBtn.selected{
+      outline: 3px solid rgba(196,138,58,.55);
+      box-shadow: 0 16px 38px rgba(0,0,0,.14);
+    }
+
+    /* ✅ Notes PRÉFAITES en rush (chips sélection) */
+    .rushPrefNotes{
+      margin-top:12px;
+      padding:10px;
+      border-radius:18px;
+      border:1px dashed rgba(31,91,71,.22);
+      background: rgba(31,91,71,.06);
+    }
+    .rushPrefNotesHead{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .rushPrefNotesHead .title{
+      font-weight:1100;
+      color:var(--green2);
+      font-size:12px;
+    }
+    .rushChipGrid{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .rushChip{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(31,91,71,.20);
+      background: rgba(255,255,255,.72);
+      color: var(--green2);
+      font-weight:1100;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .rushChip.active{
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      border-color: var(--green2);
+      color:#fff;
+      box-shadow: 0 10px 26px rgba(0,0,0,.12);
+    }
+    .rushChosen{
+      margin-top:10px;
+      font-weight:1100;
+      color: rgba(19,66,51,.92);
+      background: rgba(255,255,255,.70);
+      border:1px solid rgba(31,91,71,.16);
+      border-radius:16px;
+      padding:10px 12px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .rushChosen .tag2{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(196,138,58,.35);
+      background: rgba(196,138,58,.16);
+      color:#7a4d12;
+      font-weight:1100;
+      font-size:11px;
+    }
+
+    .rushExtras{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .rushExtraBtn{
+      flex:1;
+      min-width:160px;
+      padding:14px;
+      border-radius:18px;
+      font-weight:1100;
+      border:1px solid rgba(196,138,58,.30);
+      background: rgba(196,138,58,.14);
+      color:#7a4d12;
+    }
+
+    /* ✅ Extra boisson : boutons de boisson (rush) */
+    .rushExtraDrinkRow{
+      margin-top:10px;
+      padding:10px;
+      border-radius:18px;
+      border:1px dashed rgba(196,138,58,.35);
+      background: rgba(196,138,58,.12);
+      display:none;
+    }
+    .rushExtraDrinkRow .label{
+      font-weight:1100;
+      color:#7a4d12;
+      font-size:12px;
+      margin-bottom:8px;
+    }
+    .rushExtraDrinkBtns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .rushExtraDrinkBtn{
+      flex:1;
+      min-width:120px;
+      padding:12px;
+      border-radius:16px;
+      font-weight:1100;
+      border:1px solid rgba(31,91,71,.22);
+      background: rgba(255,255,255,.75);
+      color: var(--green2);
+    }
+
+    /* ✅ Suppléments Rush */
+    .rushSupRow{
+      margin-top:10px;
+      padding:10px;
+      border-radius:18px;
+      border:1px dashed rgba(31,91,71,.22);
+      background: rgba(31,91,71,.06);
+    }
+    .rushSupHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .rushSupHead .title{
+      font-weight:1100;
+      color:var(--green2);
+      font-size:12px;
+    }
+
+    /* ===== Petits boutons ligne commande ===== */
+    .miniBtn{
+      padding:8px 10px;
+      border-radius:14px;
+      font-weight:1100;
+    }
+
+    /* ✅ Style compteur CA (digits propres) */
+    .counterDigits{
+      font-variant-numeric: tabular-nums;
+      font-family: inherit;
+      letter-spacing: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="heroHeader">
+    <div class="heroContent">
+      <div class="logoWrapper">
+        <img src="logoLMSB.jpg" alt="Logo Le Mont Smash Burger">
+      </div>
+      <div class="brandBlock">
+        <h1>LE MONT SMASH BURGER 🍔</h1>
+        <div class="badge">V6.6</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tabbtn active" id="tabNew" type="button">Nouvelle commande</button>
+    <button class="tabbtn" id="tabQueue" type="button">Commandes</button>
+    <button class="tabbtn" id="tabClose" type="button">Service</button>
+    <button class="rushToggle" id="btnRush" type="button">🔥 Rush</button>
+  </div>
+
+  <main class="wrap">
+    <section id="viewNew" class="view">
+      <div class="grid">
+        <div class="list">
+
+          <!-- 🔥 RUSH PANEL -->
+          <div class="card" id="rushPanel" style="display:none">
+            <div class="rushPanelTitle">
+              <h2 style="margin:0">Mode Rush</h2>
+            </div>
+
+            <div class="rushModes" id="rushModes">
+              <button type="button" class="rushModeBtn active" data-mode="alacarte">À la carte</button>
+              <button type="button" class="rushModeBtn" data-mode="menu">Menu 🍔🍟🥤</button>
+              <button type="button" class="rushModeBtn" data-mode="student">Étudiant</button>
+            </div>
+
+            <!-- Choix boisson (menu/student) -->
+            <div class="rushDrinkRow" id="rushDrinkRow">
+              <div class="label">Boisson  :</div>
+              <div class="rushDrinkBtns" id="rushDrinkBtns">
+                <button type="button" class="rushDrinkBtn active" data-drinkmode="eau">Eau</button>
+                <button type="button" class="rushDrinkBtn" data-drinkmode="soda">Soda (+1,5€)</button>
+              </div>
+              <div class="rushSodaPick" id="rushSodaPickWrap">
+                <select id="rushSodaPick">
+                  <option>Coca</option><option>Coca 0</option><option>Sprite</option><option>Fanta</option><option>Oasis</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <div class="calcBox" style="margin-top:10px">
+              <span>Burger sélectionné :</span>
+              <span class="money" id="rushSelectedBurger">—</span>
+              <button type="button" class="primary miniBtn" id="btnRushAddSelected">➕ Ajouter</button>
+            </div>
+
+            <div class="rushGrid" id="rushBurgerGrid"></div>
+
+            <!-- ✅ Notes préfaites -->
+            <div class="rushPrefNotes">
+              <div class="rushPrefNotesHead">
+                <div class="title">Spécificités ✍️ </div>
+                <div class="btnbar" style="margin:0">
+                  <button type="button" class="danger miniBtn" id="btnRushNotesClear">Effacer</button>
+                </div>
+              </div>
+
+              <div class="rushChipGrid" id="rushPrefChipGrid"></div>
+
+              <div class="rushChosen" id="rushChosenBox">
+                <span style="font-weight:1100;color:var(--green2)">Sélection :</span>
+                <span class="tag2" id="rushChosenText">—</span>
+              </div>
+            </div>
+
+            <!-- ✅ Suppléments en Rush -->
+            <div class="rushSupRow">
+              <div class="rushSupHead">
+                <div class="title">Suppléments </div>
+                <div class="btnbar" style="margin:0">
+                  <button type="button" class="danger miniBtn" id="btnRushSupClear">Effacer</button>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px">
+                <div class="qty">
+                  <span>🧀 Fromage</span>
+                  <button id="rushCheeseMinus" type="button">−</button>
+                  <strong id="rushCheeseQty">0</strong>
+                  <button id="rushCheesePlus" type="button">+</button>
+                </div>
+                <div class="qty">
+                  <span>🥩 Steak</span>
+                  <button id="rushSteakMinus" type="button">−</button>
+                  <strong id="rushSteakQty">0</strong>
+                  <button id="rushSteakPlus" type="button">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 style="margin:0 0 8px">Extras rapides</h2>
+            <div class="rushExtras">
+              <button type="button" class="rushExtraBtn" data-extra="tenders">🍗 Tenders x2</button>
+              <button type="button" class="rushExtraBtn" data-extra="frites">🍟 Frites</button>
+              <button type="button" class="rushExtraBtn" data-extra="drink">🥤 Boisson</button>
+              <button type="button" class="rushExtraBtn" data-extra="dessert">🧁 Dessert</button>
+            </div>
+
+            <!-- ✅ Boissons extras : boutons -->
+            <div class="rushExtraDrinkRow" id="rushExtraDrinkRow">
+              <div class="label">Choisis la boisson à ajouter :</div>
+              <div class="rushExtraDrinkBtns" id="rushExtraDrinkBtns">
+                <button type="button" class="rushExtraDrinkBtn" data-drink="Coca">Coca</button>
+                <button type="button" class="rushExtraDrinkBtn" data-drink="Coca 0">Coca 0</button>
+                <button type="button" class="rushExtraDrinkBtn" data-drink="Sprite">Sprite</button>
+                <button type="button" class="rushExtraDrinkBtn" data-drink="Fanta">Fanta</button>
+                <button type="button" class="rushExtraDrinkBtn" data-drink="Oasis">Oasis</button>
+                <button type="button" class="rushExtraDrinkBtn" data-drink="Eau">Eau</button>
+              </div>
+            </div>
+
+            <div class="small" style="margin-top:10px">
+              Astuce : garde “Composer un item” pour les cas spéciaux (suppléments, notes détaillées…).
+            </div>
+          </div>
+
+          <!-- NORMAL MODE -->
+          <div class="card hideInRush">
+            <h2>Composer un item</h2>
+
+            <div class="col2">
+              <div>
+                <label>Burger</label>
+                <select id="mainName">
+                  <option value="">— Choisir —</option>
+                </select>
+              </div>
+              <div>
+                <label>Formule</label>
+                <select id="pricingMode">
+                  <option value="alacarte">À la carte</option>
+                  <option value="menu">Menu 🍔🍟🥤</option>
+                  <option value="student">Menu Étudiant</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- ✅ MODIF 1 : Boisson en boutons (mode normal) -->
+            <div style="margin-top:10px">
+              <label>Boisson</label>
+
+              <!-- On garde le select (caché) pour compatibilité avec la logique existante -->
+              <select id="menuDrinkMode" style="display:none">
+                <option value="eau">Eau</option>
+                <option value="soda">Soda (+1,5€)</option>
+              </select>
+
+              <div class="normalDrinkRow" id="menuDrinkRow">
+                <div class="label">Choix :</div>
+                <div class="rushDrinkBtns" id="menuDrinkBtns">
+                  <button type="button" class="rushDrinkBtn active" data-drinkmode="eau" id="btnMenuDrinkEau">Eau</button>
+                  <button type="button" class="rushDrinkBtn" data-drinkmode="soda" id="btnMenuDrinkSoda">Soda (+1,5€)</button>
+                </div>
+              </div>
+
+              <div id="sodaPickWrap" style="margin-top:8px; display:none">
+                <select id="sodaPick">
+                  <option>Coca</option><option>Coca 0</option><option>Sprite</option><option>Fanta</option><option>Oasis</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2>Suppléments (2€)</h2>
+            <div class="row">
+              <div class="qty">
+                <span>🧀 Fromage</span>
+                <button id="cheeseMinus" type="button">−</button>
+                <strong id="cheeseQty">0</strong>
+                <button id="cheesePlus" type="button">+</button>
+              </div>
+              <div class="qty">
+                <span>🥩 Steak</span>
+                <button id="steakMinus" type="button">−</button>
+                <strong id="steakQty">0</strong>
+                <button id="steakPlus" type="button">+</button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <label>Notes</label>
+            <textarea id="itemNotes" placeholder="Spécificités de cet item..."></textarea>
+
+            <div class="btnbar">
+              <button class="primary" id="btnAddItem" type="button">➕ Ajouter à la commande</button>
+            </div>
+          </div>
+
+          <div class="card hideInRush">
+            <h2>Extras</h2>
+            <div class="col2">
+              <div>
+                <label>Extra</label>
+                <select id="extraSelect">
+                  <option value="">— Choisir —</option>
+                  <option value="tenders">Tenders x2 🍗(3€)</option>
+                  <option value="frites">Frites🍟 (3€)</option>
+                  <option value="drink">Boisson🥤(2€)</option>
+                  <option value="dessert">Dessert🧁(3€)</option>
+                </select>
+              </div>
+              <div>
+                <label>Qté</label>
+                <div class="qty" style="justify-content:space-between">
+                  <button id="extraMinus" type="button">−</button>
+                  <strong id="extraQtyDisplay">1</strong>
+                  <button id="extraPlus" type="button">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="drinkPickWrap" style="display:none; margin-top:10px">
+              <label>Choix boisson</label>
+              <select id="drinkPick">
+                <option>Coca</option><option>Coca 0</option><option>Sprite</option><option>Fanta</option><option>Oasis</option><option>Eau</option>
+              </select>
+            </div>
+
+            <div class="btnbar">
+              <button id="btnAddExtra" type="button">Ajouter Extra</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="rightPanel" style="position: sticky; top: 85px; align-self: start;">
+          <h2>Commande en cours</h2>
+
+          <div class="row" style="justify-content:space-between">
+            <span class="pill">Items : <strong id="orderItemCount">0</strong></span>
+          </div>
+
+          <div class="totalBig" style="margin-top:10px">
+            <span>À payer</span>
+            <span class="money" id="orderTotal">0,00€</span>
+          </div>
+          <div class="small" id="giftSummary" style="margin-top:6px; font-weight:1000; color:var(--green2)"></div>
+
+          <div class="divider"></div>
+          <div class="list" id="itemsList"></div>
+
+          <div class="divider"></div>
+
+          <div class="payBox">
+            <h2 style="margin:0 0 8px">Paiement</h2>
+
+            <div class="payLine">
+              <div>
+                <label>Moyen</label>
+                <input id="payMethod" type="hidden" value="cb" />
+                <div class="payMethods" id="payMethods">
+                  <button type="button" class="payBtn active" data-method="cb">CB 💳</button>
+                  <button type="button" class="payBtn" data-method="cb_split">CB divisé</button>
+                  <button type="button" class="payBtn" data-method="cash">Espèces 💶</button>
+                  <button type="button" class="payBtn" data-method="tr">Ticket Resto 🎫️</button>
+                  <button type="button" class="payBtn" data-method="mix">Espèces + CB</button>
+                </div>
+              </div>
+
+              <div id="cashWrap" style="display:none">
+                <label>Espèces (donné)</label>
+                <input id="cashAmount" type="number" min="0" step="0.50" inputmode="none" placeholder="ex: 20" />
+              </div>
+
+              <div id="trWrap" style="display:none">
+                <label>Ticket Resto (montant)</label>
+                <input id="trAmount" type="number" min="0" step="0.50" inputmode="none" placeholder="ex: 8" />
+              </div>
+
+              <div id="trRemainderMethodWrap" style="display:none">
+                <label>Reste à payer en</label>
+                <select id="trRemainderMethod">
+                  <option value="cb">CB</option>
+                  <option value="cash">Espèces</option>
+                </select>
+              </div>
+
+              <div id="trCashGivenWrap" style="display:none">
+                <label>Espèces (donné)</label>
+                <input id="trCashGiven" type="number" min="0" step="0.50" inputmode="none" placeholder="ex: 10" />
+              </div>
+            </div>
+
+            <div id="mixCalc" class="calcBox" style="display:none; margin-top:10px">
+              <span>Reste à payer en CB :</span>
+              <span class="money" id="cardRemainder">0,00€</span>
+            </div>
+
+            <div id="trCalc" class="calcBox" style="display:none; margin-top:10px">
+              <span>Reste à payer :</span>
+              <span class="money" id="trRemainder">0,00€</span>
+            </div>
+
+            <div id="cashCalc" class="calcBox" style="display:none; margin-top:10px">
+              <span>Monnaie à rendre :</span>
+              <span class="money" id="cashChange">0,00€</span>
+            </div>
+
+            <div id="freeCalc" class="calcBox" style="display:none; margin-top:10px">
+              <span>🎁 Offert (encaissé) :</span>
+              <span class="money">0,00€</span>
+              <span class="small" id="freeValue" style="margin-left:auto">Valeur : —</span>
+            </div>
+
+            <div id="splitCardWrap" class="splitCardWrap">
+              <div class="splitRow" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                <div style="flex:1; min-width:190px;">
+                  <label>Ajouter une carte</label>
+                  <input id="splitCardAmount" type="number" min="0" step="0.50" inputmode="none" placeholder="ex: 10" />
+                </div>
+                <div style="flex:0; min-width:auto">
+                  <button class="miniBtn edit-btn" id="btnAddSplitCard" type="button">+ Ajouter CB</button>
+                </div>
+              </div>
+
+              <div class="splitList" id="splitCardsList"></div>
+
+              <div id="splitRemainderBox" class="calcBox" style="margin-top:10px; display:flex">
+                <span>Reste à payer :</span>
+                <span class="money" id="splitRemainder">0,00€</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <label>Notes globales</label>
+          <textarea id="orderNotes" placeholder="À emporter, prénom client..."></textarea>
+
+          <div class="btnbar">
+            <button class="primary" id="btnValidateOrder" style="flex:2" type="button">✅ Valider la commande</button>
+            <button class="danger" id="btnCancelOrder" style="flex:1" type="button">Annuler</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card miniDashBottom">
+        <div class="miniDash">
+          <h2>Commandes à faire</h2>
+          <div class="miniTodoGrid" id="miniTodoList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="viewQueue" class="view" style="display:none">
+      <div class="grid">
+        <div class="card"><h2>⏳ À faire</h2><div class="list" id="todoList"></div></div>
+        <div class="card"><h2>✅ Faites</h2><div class="list" id="doneList"></div></div>
+      </div>
+    </section>
+
+    <section id="viewClose" class="view" style="display:none">
+      <div class="card">
+        <h2>Bilan du service</h2>
+
+        <div class="row">
+          <span class="pill">Commandes : <strong id="statCount">0</strong></span>
+          <span class="pill">Panier moyen : <strong id="statAverage">0,00€</strong></span>
+          <span class="pill">Temps moyen prépa : <strong id="statPrepAvg">—</strong></span>
+        </div>
+
+        <div class="stat-grid">
+          <div class="calcBox"><span>CA CB :</span><span class="money counterDigits" id="statCB">0,00€</span></div>
+          <div class="calcBox"><span>CA Espèces :</span><span class="money counterDigits" id="statCash">0,00€</span></div>
+          <div class="calcBox"><span>CA TR :</span><span class="money counterDigits" id="statTR">0,00€</span></div>
+          <div class="calcBox"><span>CA Total :</span><span class="money counterDigits" id="statRevenue">0,00€</span></div>
+        </div>
+
+        <div class="miniGrid">
+          <div class="box">
+            <div class="boxTitle">⭐ Top produit</div>
+            <div class="bigRecap" id="statTopProduct">—</div>
+            <div class="small" id="statTopProductMeta"></div>
+          </div>
+
+          <div class="box">
+            <div class="boxTitle">💳 Répartition paiements</div>
+            <div class="bigRecap" id="statPaySplit">—</div>
+            <div class="small">(% sur le CA encaissé)</div>
+            <div class="bigRecap" id="statPaySplitCount" style="margin-top:8px">—</div>
+            <div class="small">(% sur le nombre de commandes utilisant ce mode)</div>
+          </div>
+
+          <div class="box">
+            <div class="boxTitle">⏱ Temps moyen de prépa</div>
+            <div class="bigRecap" id="statPrep">—</div>
+            <div class="small" id="statPrepMeta">Basé sur les commandes “Faites”</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="box">
+          <div class="boxTitle">🏆 Top 5 ventes (quantités)</div>
+          <ol class="topList" id="statTop5"></ol>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="btnbar">
+          <button id="btnExport" type="button">⬇️ Exporter CSV</button>
+          <button class="danger" id="btnCloseService" type="button">⚠️ Clôturer le service</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toastWrap" style="
+    position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+    display:flex; flex-direction:column; gap:10px; z-index:9999; width:min(520px, calc(100% - 24px));
+  "></div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div id="casinoOverlay">
+    <div class="casinoCard">
+      <p class="casinoTitle">🎰 Fin de service — Gain du jour</p>
+      <div class="casinoGain" id="casinoGain">0,00€</div>
+      <p class="casinoSub" id="casinoMsg">GG !</p>
+      <div class="casinoBtns">
+        <button class="primary" id="btnCasinoOk" type="button">OK ✅</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Mini clavier popover -->
+  <div id="kbdPopover" role="dialog" aria-modal="false">
+    <div id="kbdTitle">Saisie</div>
+    <div id="kbdPreview">—</div>
+    <div id="kbdKeys"></div>
+    <div class="kbdActions">
+      <button type="button" class="danger" id="kbdClear">Effacer</button>
+      <button type="button" class="primary" id="kbdOk">OK</button>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const PRICES = {
+    burger: 11, menu: 13, student: 10,
+    sodaUpgrade: 1.5, supCheese: 2, supSteak: 2,
+    extras: { tenders: 3, frites: 3, drink: 2, dessert: 3 }
+  };
+
+  const MENU = { burgers: ["Yaute", "Rebloch", "Cheese", "Chick'Avo", "Ô My Goat", "Patafort"] };
+  const STORAGE_KEY = "msb_data_v7";
+  const LIVE_URL = "https://script.google.com/macros/s/AKfycbyo1mKET4MrkJGu6e-G-n2ZmxFQj2phNS7gi1CsvneIyXeeipuCzKF4WqJWC1qgNxd42Q/exec";
+
+async function postLive(payload){
+  await fetch(LIVE_URL, {
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+}
+  const ADMIN_PIN = "1701";
+  const RUSH_KEY = "msb_rush_mode_v1";
+
+  const RUSH_PRESET_NOTES = [
+    "Sans sauce",
+    "Sans oignons",
+    "Sans cornichons",
+    "Sans fromage",
+    "Sans salade"
+  ];
+
+  let orders = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  let draft = { items: [], extras: [] };
+  let sup = { cheese: 0, steak: 0 };
+  let extraQtyValue = 1;
+  let currentTab = "new";
+  let splitCards = [];
+
+  let rushOn = (localStorage.getItem(RUSH_KEY) === "1");
+  let rushPricing = "alacarte";
+  let rushPresetSelected = [];
+  let rushSelectedBurger = ""; // <- burger choisi, figé
+
+  // boisson rush (menu/student)
+  let rushDrinkMode = "eau";     // eau | soda
+  let rushSodaPick  = "Coca";
+
+  // ✅ suppléments rush (appliqués au prochain burger ajouté)
+  let rushSup = { cheese: 0, steak: 0 };
+
+  const dom = (id) => document.getElementById(id);
+  const euro = (n) => (Number(n)||0).toLocaleString("fr-FR", {style:"currency", currency:"EUR"});
+  const nowLabel = () => new Date().toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  /* ===== Toast ===== */
+  function toast(msg, type="ok", sub=""){
+    const wrap = dom("toastWrap");
+    if(!wrap) return;
+    const t = document.createElement("div");
+    t.className = `toast ${type === "warn" ? "warn" : type === "bad" ? "bad" : ""}`;
+    t.innerHTML = `
+      <div>${msg}${sub ? `<small>${escapeHtml(sub)}</small>` : ""}</div>
+      <button class="x" type="button">✕</button>
+    `;
+    t.querySelector(".x").onclick = () => t.remove();
+    wrap.appendChild(t);
+    setTimeout(()=>{ if(t.parentNode) t.remove(); }, 2600);
+  }
+
+  function saveOrders(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(orders)); }
+
+  function fillBurgerNames(){
+    dom("mainName").innerHTML = `<option value="">— Choisir —</option>`;
+    MENU.burgers.forEach(n => {
+      const opt = document.createElement("option");
+      opt.value = n;
+      opt.textContent = n;
+      dom("mainName").appendChild(opt);
+    });
+    dom("mainName").value = "";
+  }
+
+  /* =========================================================
+     ✅ CONFETTI (GLOBAL)
+     ========================================================= */
+  let confettiRAF = null;
+  let confettiParticles = [];
+  let confettiUntil = 0;
+  let CONF = null;
+
+  function confettiSetup(){
+    const canvas = dom("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function resize(){
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = "100vw";
+      canvas.style.height = "100vh";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", resize, {passive:true});
+    resize();
+
+    return { canvas, ctx, resize };
+  }
+
+  function ensureConfetti(){
+    if(!CONF) CONF = confettiSetup();
+    return CONF;
+  }
+
+  function spawnConfetti(n=220){
+    ensureConfetti();
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    for(let i=0;i<n;i++){
+      confettiParticles.push({
+        x: w/2 + (Math.random()-0.5)*80,
+        y: h*0.25 + (Math.random()-0.5)*40,
+        vx: (Math.random()-0.5) * 8,
+        vy: (Math.random()*-10) - 6,
+        g: 0.22 + Math.random()*0.12,
+        size: 6 + Math.random()*7,
+        rot: Math.random()*Math.PI*2,
+        vr: (Math.random()-0.5)*0.25,
+        life: 0,
+        ttl: 180 + Math.floor(Math.random()*60),
+        hue: Math.floor(Math.random()*360)
+      });
+    }
+  }
+
+  function confettiBoom(ms=2000){
+    confettiUntil = Date.now() + ms;
+    spawnConfetti(260);
+    startConfetti();
+  }
+
+  function startConfetti(){
+    ensureConfetti();
+    if(confettiRAF) return;
+
+    const ctx = CONF.ctx;
+
+    function frame(){
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      ctx.clearRect(0,0,w,h);
+
+      if(Date.now() < confettiUntil && confettiParticles.length < 900){
+        spawnConfetti(18);
+      }
+
+      confettiParticles.forEach(p => {
+        p.life++;
+        p.vy += p.g;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+
+        const alpha = Math.max(0, 1 - (p.life / p.ttl));
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = `hsl(${p.hue} 90% 55%)`;
+        ctx.fillRect(-p.size/2, -p.size/3, p.size, p.size*0.66);
+        ctx.restore();
+      });
+
+      confettiParticles = confettiParticles.filter(p => p.life < p.ttl && p.y < h + 80);
+
+      if(Date.now() >= confettiUntil && confettiParticles.length === 0){
+        confettiRAF = null;
+        return;
+      }
+      confettiRAF = requestAnimationFrame(frame);
+    }
+
+    confettiRAF = requestAnimationFrame(frame);
+  }
+
+  function stopConfetti(){
+    confettiUntil = 0;
+    confettiParticles = [];
+    if(confettiRAF){
+      cancelAnimationFrame(confettiRAF);
+      confettiRAF = null;
+    }
+    if(CONF){
+      CONF.ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+    }
+  }
+
+  /* ===== Totaux ===== */
+  function getDraftTotals(){
+    const all = [ ...(draft.items||[]), ...(draft.extras||[]) ];
+    let gross = 0;
+    let comped = 0;
+    all.forEach(x => {
+      const line = (Number(x.price||0) * Number(x.qty||0));
+      gross += line;
+      if(x.comped) comped += line;
+    });
+    const payable = Math.max(0, gross - comped);
+    return { gross, comped, payable };
+  }
+
+  function getDraftItemCount(data){
+    const items = [...(data.items||[]), ...(data.extras||[])];
+    return items.reduce((sum, x) => {
+      const perUnit = Number(x.baseItems || 1);
+      const qty = Number(x.qty || 0);
+      return sum + (perUnit * qty);
+    }, 0);
+  }
+
+  function getItemTotal(){
+    const mode = dom("pricingMode").value;
+    let t = (mode === "menu") ? PRICES.menu : (mode === "student" ? PRICES.student : PRICES.burger);
+    if(mode !== "alacarte" && dom("menuDrinkMode").value === "soda") t += PRICES.sodaUpgrade;
+    return t + (sup.cheese * PRICES.supCheese) + (sup.steak * PRICES.supSteak);
+  }
+
+  function resetItem(){
+    sup = { cheese: 0, steak: 0 };
+    dom("cheeseQty").textContent = "0";
+    dom("steakQty").textContent = "0";
+    dom("itemNotes").value = "";
+    dom("mainName").value = "";
+  }
+
+  function addItem(){
+    const name = dom("mainName").value;
+    if(!name){ toast("Choisis un burger 🙂","warn"); return; }
+
+    const mode = dom("pricingMode").value;
+    let meta = mode === "alacarte" ? "Solo" : (mode === "menu" ? "Menu" : "Étudiant");
+    if(mode !== "alacarte"){
+      const drink = (dom("menuDrinkMode").value === "soda") ? dom("sodaPick").value : "Eau";
+      meta += ` (${drink})`;
+    }
+    if(sup.cheese) meta += ` +${sup.cheese} fromage🧀`;
+    if(sup.steak) meta += ` +${sup.steak} steak🥩`;
+
+    draft.items.push({
+      id: Date.now() + Math.random(),
+      label: "🍔 " + name,
+      meta,
+      notes: dom("itemNotes").value.trim(),
+      price: getItemTotal(),
+      qty: 1,
+      mode,
+      baseItems: (mode === "alacarte") ? 1 : 3,
+      comped: false
+    });
+
+    toast("Ajouté ✅","ok", `${name} (${meta})`);
+    resetItem();
+    renderDraft();
+    syncUI();
+  }
+
+  function addExtraQuick(key, qty=1, drinkName="Coca"){
+    if(!key) return;
+
+    let label;
+    if(key === "tenders") label = "Tenders (x2) 🍗 ";
+    else if(key === "drink") label = "Boisson 🥤(" + drinkName + ")";
+    else if(key === "frites") label = "Frites 🍟";
+    else if(key === "dessert") label = "Dessert 🧁";
+    else label = key;
+
+    draft.extras.push({
+      id: Date.now() + Math.random(),
+      label: "✨ " + label,
+      price: PRICES.extras[key],
+      qty: qty,
+      baseItems: 1,
+      comped: false
+    });
+
+    toast("Extra ajouté ✨","ok", `${label} x${qty}`);
+    renderDraft();
+    syncUI();
+  }
+
+  function addExtra(){
+    const key = dom("extraSelect").value;
+    if(!key) return;
+
+    let label;
+    if(key === "tenders") label = "Tenders (x2)";
+    else if(key === "drink") label = "Boisson (" + dom("drinkPick").value + ")";
+    else label = key.charAt(0).toUpperCase() + key.slice(1);
+
+    draft.extras.push({
+      id: Date.now() + Math.random(),
+      label: "✨ " + label,
+      price: PRICES.extras[key],
+      qty: extraQtyValue,
+      baseItems: 1,
+      comped: false
+    });
+
+    toast("Extra ajouté ✨","ok", `${label} x${extraQtyValue}`);
+
+    dom("extraSelect").value = "";
+    extraQtyValue = 1;
+    dom("extraQtyDisplay").textContent = "1";
+    renderDraft();
+    syncUI();
+  }
+
+  window.toggleGiftLine = (type, id) => {
+    const list = (type === "it") ? draft.items : draft.extras;
+    const obj = list.find(o => o.id === id);
+    if(!obj) return;
+    obj.comped = !obj.comped;
+    renderDraft();
+    syncUI();
+  };
+
+  function renderDraft(){
+    const list = dom("itemsList");
+    list.innerHTML = "";
+
+    let count = 0;
+    const all = [
+      ...draft.items.map(i => ({...i, type:'it'})),
+      ...draft.extras.map(e => ({...e, type:'ex'}))
+    ];
+
+    all.forEach(obj => {
+      const perUnit = Number(obj.baseItems || 1);
+      count += perUnit * obj.qty;
+
+      const el = document.createElement("div");
+      el.className = "box";
+
+      const lineTotal = Number(obj.price||0) * Number(obj.qty||0);
+
+      el.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px">
+          <div style="flex:1; min-width:0">
+            <div class="boxTitle" style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+              <span>${escapeHtml(obj.label)}</span>
+
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+                <button class="${obj.comped ? 'gift-btn' : ''}" type="button"
+                  style="padding:6px 10px; border-radius:12px; font-weight:1100"
+                  onclick="window.toggleGiftLine('${obj.type}', ${obj.id})"
+                  title="Offrir cet article">🎁</button>
+
+                <div class="qty" aria-label="Quantité">
+                  <button type="button" onclick="window.changeQty('${obj.type}', ${obj.id}, -1)">−</button>
+                  <strong>${obj.qty}</strong>
+                  <button type="button" onclick="window.changeQty('${obj.type}', ${obj.id}, 1)">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="boxMeta" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+              ${obj.meta ? `<span>${escapeHtml(obj.meta)}</span>` : ``}
+              ${obj.comped ? `<span class="tag giftline">🎁 Offert</span>` : ``}
+            </div>
+
+            ${obj.notes ? `<div class="boxMeta">📝 ${escapeHtml(obj.notes)}</div>` : ""}
+            <div class="money">${euro(lineTotal)}</div>
+          </div>
+
+          <button class="danger" type="button" style="padding:5px 10px" onclick="window.removeDraft('${obj.type}', ${obj.id})">🗑️</button>
+        </div>
+      `;
+      list.appendChild(el);
+    });
+
+    dom("orderItemCount").textContent = count;
+
+    const totals = getDraftTotals();
+    dom("orderTotal").textContent = euro(totals.payable);
+
+    if(totals.comped > 0){
+      dom("giftSummary").textContent = `🎁 Valeur offerte : ${euro(totals.comped)} · Valeur totale : ${euro(totals.gross)}`;
+    } else {
+      dom("giftSummary").textContent = totals.gross > 0 ? `Valeur totale : ${euro(totals.gross)}` : "";
+    }
+
+    dom("btnValidateOrder").disabled = all.length === 0;
+    renderMiniTodo();
+  }
+
+  window.removeDraft = (type, id) => {
+    if(type === 'it') draft.items = draft.items.filter(i => i.id !== id);
+    else draft.extras = draft.extras.filter(e => e.id !== id);
+    toast("Supprimé 🗑️","warn");
+    renderDraft();
+    syncUI();
+  };
+
+  window.changeQty = (type, id, delta) => {
+    const list = (type === "it") ? draft.items : draft.extras;
+    const obj = list.find(o => o.id === id);
+    if(!obj) return;
+    obj.qty += delta;
+    if(obj.qty < 1) obj.qty = 1;
+    renderDraft();
+    syncUI();
+  };
+
+  /* ✅ MODIF 1 (JS) : gestion boutons boisson en mode normal */
+  function applyNormalDrinkButtons(){
+    const mode = dom("pricingMode").value;
+    const isMenu = mode !== "alacarte";
+
+    const select = dom("menuDrinkMode"); // caché
+    const btnWrap = dom("menuDrinkBtns");
+    if(!select || !btnWrap) return;
+
+    // disable / enable boutons selon formule
+    btnWrap.querySelectorAll(".rushDrinkBtn").forEach(b => {
+      b.disabled = !isMenu;
+      b.classList.toggle("active", isMenu && (b.dataset.drinkmode === select.value));
+      if(!isMenu) b.classList.remove("active");
+    });
+
+    // si pas menu => forcer eau
+    if(!isMenu){
+      select.value = "eau";
+    } else if(!select.value){
+      select.value = "eau";
+    }
+
+    // afficher soda pick si soda
+    dom("sodaPickWrap").style.display = (isMenu && select.value === "soda") ? "block" : "none";
+  }
+
+  /* ✅ Paiement */
+  function updatePaymentCalc(){
+    const totals = getDraftTotals();
+    const total = totals.payable;
+    const method = dom("payMethod").value;
+
+    dom("cashWrap").style.display = "none";
+    dom("trWrap").style.display = "none";
+    dom("trRemainderMethodWrap").style.display = "none";
+    dom("trCashGivenWrap").style.display = "none";
+    dom("mixCalc").style.display = "none";
+    dom("trCalc").style.display = "none";
+    dom("cashCalc").style.display = "none";
+    dom("splitCardWrap").style.display = "none";
+    dom("freeCalc").style.display = "none";
+
+    if(method === "free"){
+      dom("freeCalc").style.display = "flex";
+      dom("freeValue").textContent = `Valeur : ${euro(totals.gross)}`;
+      return;
+    }
+
+    if(method === "mix") {
+      dom("cashWrap").style.display = "block";
+      dom("mixCalc").style.display = "flex";
+      const cashVal = Math.max(0, Number(dom("cashAmount").value || 0));
+      const remainder = Math.max(0, total - cashVal);
+      dom("cardRemainder").textContent = euro(remainder);
+      return;
+    }
+
+    if(method === "cash"){
+      dom("cashWrap").style.display = "block";
+      dom("cashCalc").style.display = "flex";
+      const given = Math.max(0, Number(dom("cashAmount").value || 0));
+      dom("cashChange").textContent = euro(Math.max(0, given - total));
+      return;
+    }
+
+    if(method === "tr") {
+      dom("trWrap").style.display = "block";
+      dom("trRemainderMethodWrap").style.display = "block";
+      dom("trCalc").style.display = "flex";
+
+      const trVal = Math.max(0, Number(dom("trAmount").value || 0));
+      const due = Math.max(0, total - trVal);
+
+      const remMethod = dom("trRemainderMethod").value;
+
+      if(remMethod === "cb"){
+        dom("trRemainder").textContent = euro(due);
+        return;
+      }
+
+      dom("trCashGivenWrap").style.display = due > 0 ? "block" : "none";
+
+      const cashGiven = Math.max(0, Number(dom("trCashGiven").value || 0));
+      const stillToPay = Math.max(0, due - cashGiven);
+      const change = Math.max(0, cashGiven - due);
+
+      dom("trRemainder").textContent = euro(stillToPay);
+
+      dom("cashCalc").style.display = "flex";
+      dom("cashChange").textContent = euro(change);
+      return;
+    }
+
+    if(method === "cb_split"){
+      dom("splitCardWrap").style.display = "block";
+      updateSplitUI(total);
+      return;
+    }
+  }
+
+  function syncUI(){
+    const isMenu = dom("pricingMode").value !== "alacarte";
+
+    dom("menuDrinkMode").disabled = !isMenu;
+    dom("sodaPickWrap").style.display = (isMenu && dom("menuDrinkMode").value === "soda") ? "block" : "none";
+
+    dom("drinkPickWrap").style.display = dom("extraSelect").value === "drink" ? "block" : "none";
+
+    applyNormalDrinkButtons(); // ✅ important (mode normal)
+    updatePaymentCalc();
+  }
+
+  /* ===== CB split UI ===== */
+  function updateSplitUI(total){
+    const sumCards = splitCards.reduce((s,x)=>s+Number(x.amount||0),0);
+    const rem = Math.max(0, total - sumCards);
+    dom("splitRemainder").textContent = euro(rem);
+
+    const wrap = dom("splitCardsList");
+    wrap.innerHTML = "";
+    splitCards.forEach((c, idx) => {
+      const line = document.createElement("div");
+      line.className = "box";
+      line.style.display = "flex";
+      line.style.justifyContent = "space-between";
+      line.style.alignItems = "center";
+      line.style.gap = "10px";
+      line.innerHTML = `
+        <span class="amt"><strong>CB #${idx+1}</strong> : ${euro(c.amount)}</span>
+        <button class="danger miniBtn" type="button" onclick="window.delSplit(${idx})">Suppr</button>
+      `;
+      wrap.appendChild(line);
+    });
+  }
+
+  window.delSplit = (idx) => {
+    splitCards.splice(idx,1);
+    updatePaymentCalc();
+  };
+
+  function getPaymentInfo(){
+    const method = dom("payMethod").value;
+    const totals = getDraftTotals();
+    const total = totals.payable;
+
+    if(method === "free"){
+      return { method, cash: 0, card: 0, tr: 0, comped: true, compedValue: totals.gross };
+    }
+
+    if(method === "cb_split"){
+      const cleanCards = splitCards
+        .map(x => ({amount: Math.max(0, Number(x.amount||0))}))
+        .filter(x => x.amount > 0);
+
+      const sum = cleanCards.reduce((s,x)=>s+x.amount,0);
+      const remainder = Math.max(0, total - sum);
+
+      return { method, cards: cleanCards, card: sum, cash: 0, tr: 0, remainder };
+    }
+
+    if(method === "mix"){
+      const cash = Math.max(0, Number(dom("cashAmount").value || 0));
+      const remainder = Math.max(0, total - cash);
+      return { method, cash, card: remainder, tr: 0 };
+    }
+
+    if(method === "tr"){
+      const tr = Math.max(0, Number(dom("trAmount").value || 0));
+      const remainder = Math.max(0, total - tr);
+      const remMethod = dom("trRemainderMethod").value;
+
+      if(remMethod === "cash"){
+        const cashGiven = Math.max(0, Number(dom("trCashGiven").value || 0));
+        return { method, tr, cash: remainder, card: 0, cashGiven, remainderMethod: remMethod };
+      }
+
+      return { method, tr, cash: 0, card: remainder, remainderMethod: remMethod };
+    }
+
+    if(method === "cash"){
+      return { method, cashGiven: Math.max(0, Number(dom("cashAmount").value||0)), cash: total, card: 0, tr: 0 };
+    }
+
+    return { method: "cb", cash: 0, card: total, tr: 0 };
+  }
+
+  function paymentLabel(p){
+    if(!p) return "—";
+    if(p.method === "free") return "🎁 Offert";
+    if(p.method === "cb") return "CB";
+    if(p.method === "cash") return "Espèces";
+    if(p.method === "mix") return "Mix";
+    if(p.method === "cb_split") return "CB divisé";
+    if(p.method === "tr") return "TR";
+    if(p.method === "cancel") return "⛔ Annulation";
+    return "—";
+  }
+
+  function paymentDetails(p){
+    if(!p) return "—";
+    if(p.method === "free") return `🎁 Offert (encaissé 0€)`;
+    if(p.method === "cancel") return "⛔ Annulation";
+    if(p.method === "cb") return `CB : ${euro(p.card || 0)}`;
+    if(p.method === "cash") {
+      const paid = Number(p.cash || 0);
+      const given = Number(p.cashGiven || 0);
+      const change = Math.max(0, given - paid);
+      return `${euro(given)} Donné · 💰 Monnaie : ${euro(change)}`;
+    }
+    if(p.method === "mix") return `Mix : Espèces ${euro(p.cash || 0)} + CB ${euro(p.card || 0)}`;
+    if(p.method === "tr") {
+      const rem = (p.remainderMethod === "cash") ? "Espèces" : "CB";
+      const rest = (p.cash||0) + (p.card||0);
+      if(p.remainderMethod === "cash"){
+        const due = Math.max(0, rest);
+        const given = Number(p.cashGiven || 0);
+        const change = Math.max(0, given - due);
+        return `TR ${euro(p.tr || 0)} + Espèces ${euro(given)} · Monnaie ${euro(change)}`;
+      }
+      return `TR ${euro(p.tr || 0)} + ${rem} ${euro(rest)}`;
+    }
+    if(p.method === "cb_split"){
+      const list = (p.cards || []).map((c,i)=>`CB#${i+1} ${euro(c.amount||0)}`).join(" · ");
+      return `CB divisé : ${list} (Total ${euro(p.card||0)})`;
+    }
+    return paymentLabel(p);
+  }
+
+  /* =========================================================
+     Mini clavier popover (money / pin / text)
+     ========================================================= */
+  const kbd = { open:false, mode:"money", value:"", target:null, resolve:null, anchorRect:null };
+
+  function kbdSetPosFromRect(rect){
+    const pop = dom("kbdPopover");
+    const margin = 8;
+    let left = rect.left;
+    let top  = rect.bottom + 6;
+    const w = pop.offsetWidth;
+    const h = pop.offsetHeight;
+
+    left = Math.min(left, window.innerWidth - w - margin);
+    left = Math.max(margin, left);
+
+    if(top + h + margin > window.innerHeight){
+      top = rect.top - h - 6;
+      if(top < margin) top = margin;
+    }
+    pop.style.left = Math.round(left) + "px";
+    pop.style.top  = Math.round(top) + "px";
+  }
+
+  function kbdRefreshPreview(){
+    const prev = dom("kbdPreview");
+    if(kbd.mode === "pin"){
+      prev.textContent = kbd.value ? "•".repeat(kbd.value.length) : "—";
+      prev.style.justifyContent = "center";
+    } else {
+      prev.textContent = kbd.value || "—";
+      prev.style.justifyContent = "flex-end";
+    }
+  }
+
+  function kbdRenderKeys(){
+    const wrap = dom("kbdKeys");
+    wrap.innerHTML = "";
+
+    const addRow = (keys) => {
+      const row = document.createElement("div");
+      row.className = "kbdRow";
+      keys.forEach(k => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "kbdKey";
+        b.textContent = k.label;
+        if(k.wide) b.classList.add("wide");
+        if(k.xwide) b.classList.add("xwide");
+        b.onclick = () => kbdPush(k.key);
+        row.appendChild(b);
+      });
+      wrap.appendChild(row);
+    };
+
+    if(kbd.mode === "money"){
+      addRow([{key:"1",label:"1"},{key:"2",label:"2"},{key:"3",label:"3"}]);
+      addRow([{key:"4",label:"4"},{key:"5",label:"5"},{key:"6",label:"6"}]);
+      addRow([{key:"7",label:"7"},{key:"8",label:"8"},{key:"9",label:"9"}]);
+      addRow([{key:"dec",label:"."},{key:"0",label:"0"},{key:"back",label:"⌫"}]);
+      return;
+    }
+
+    if(kbd.mode === "pin"){
+      addRow([{key:"1",label:"1"},{key:"2",label:"2"},{key:"3",label:"3"}]);
+      addRow([{key:"4",label:"4"},{key:"5",label:"5"},{key:"6",label:"6"}]);
+      addRow([{key:"7",label:"7"},{key:"8",label:"8"},{key:"9",label:"9"}]);
+      addRow([{key:"back",label:"⌫",wide:true},{key:"0",label:"0"},{key:"ok",label:"OK",wide:true}]);
+      return;
+    }
+
+    addRow([{key:"a",label:"A"},{key:"z",label:"Z"},{key:"e",label:"E"},{key:"r",label:"R"},{key:"t",label:"T"},{key:"y",label:"Y"},{key:"u",label:"U"}]);
+    addRow([{key:"i",label:"I"},{key:"o",label:"O"},{key:"p",label:"P"},{key:"q",label:"Q"},{key:"s",label:"S"},{key:"d",label:"D"},{key:"f",label:"F"}]);
+    addRow([{key:"g",label:"G"},{key:"h",label:"H"},{key:"j",label:"J"},{key:"k",label:"K"},{key:"l",label:"L"},{key:"m",label:"M"},{key:"back",label:"⌫",wide:true}]);
+    addRow([{key:"w",label:"W"},{key:"x",label:"X"},{key:"c",label:"C"},{key:"v",label:"V"},{key:"b",label:"B"},{key:"n",label:"N"},{key:"-",label:"-",wide:true}]);
+    addRow([{key:"space",label:"Espace",xwide:true},{key:".",label:"."},{key:"'",label:"'"}]);
+  }
+
+  function kbdPush(key){
+    if(key === "back"){ kbd.value = kbd.value.slice(0, -1); kbdRefreshPreview(); return; }
+    if(key === "space"){ kbd.value += " "; kbdRefreshPreview(); return; }
+    if(key === "dec"){
+      if(kbd.mode === "money"){
+        if(!/[.,]/.test(kbd.value)) kbd.value += ".";
+        kbdRefreshPreview();
+      }
+      return;
+    }
+    if(key === "ok"){ kbdClose(true); return; }
+    if(key === "clear"){ kbd.value = ""; kbdRefreshPreview(); return; }
+
+    if(kbd.mode === "pin"){
+      if(!/^\d$/.test(key)) return;
+      if(kbd.value.length >= 10) return;
+      kbd.value += key;
+      kbdRefreshPreview();
+      return;
+    }
+
+    if(kbd.mode === "money"){
+      if(/^\d$/.test(key)) { kbd.value += key; kbdRefreshPreview(); return; }
+      if(key === "."){ kbdPush("dec"); return; }
+      return;
+    }
+
+    kbd.value += key;
+    kbdRefreshPreview();
+  }
+
+  function kbdOpenAtRect(rect, {mode="money", title="Saisie", initial="", target=null} = {}){
+    kbd.open = true;
+    kbd.mode = mode;
+    kbd.value = String(initial || "");
+    kbd.target = target;
+    kbd.anchorRect = rect;
+
+    dom("kbdTitle").textContent = title;
+    const pop = dom("kbdPopover");
+    pop.style.display = "block";
+
+    kbdRenderKeys();
+    kbdRefreshPreview();
+    kbdSetPosFromRect(rect);
+  }
+
+  function kbdClose(commitToTarget=false){
+    if(commitToTarget && kbd.target){
+      if(kbd.mode === "money"){
+        const normalized = String(kbd.value || "").replace(",", ".");
+        kbd.target.value = normalized;
+        kbd.target.dispatchEvent(new Event("input", {bubbles:true}));
+      } else {
+        kbd.target.value = kbd.value;
+        kbd.target.dispatchEvent(new Event("input", {bubbles:true}));
+      }
+    }
+
+    dom("kbdPopover").style.display = "none";
+    kbd.open = false;
+
+    if(kbd.resolve){
+      const r = kbd.value;
+      const resolver = kbd.resolve;
+      kbd.resolve = null;
+      resolver(r);
+    }
+
+    kbd.target = null;
+    kbd.value = "";
+  }
+
+  dom("kbdClear").onclick = () => kbdPush("clear");
+  dom("kbdOk").onclick = () => kbdClose(true);
+
+  document.addEventListener("pointerdown", (e) => {
+    if(!kbd.open) return;
+    const pop = dom("kbdPopover");
+    const isInside = pop.contains(e.target);
+    const isTarget = (kbd.target && e.target === kbd.target);
+    if(!isInside && !isTarget){ kbdClose(false); }
+  });
+
+  window.addEventListener("resize", () => {
+    if(!kbd.open || !kbd.anchorRect) return;
+    kbdSetPosFromRect(kbd.anchorRect);
+  });
+
+  function bindMiniKeyboardToInput(id, mode, title){
+    const el = dom(id);
+    if(!el) return;
+    const open = () => {
+      const rect = el.getBoundingClientRect();
+      kbdOpenAtRect(rect, { mode, title, initial: el.value, target: el });
+    };
+    el.addEventListener("focus", open);
+    el.addEventListener("click", open);
+  }
+
+  bindMiniKeyboardToInput("cashAmount", "money", "Espèces (donné)");
+  bindMiniKeyboardToInput("splitCardAmount", "money", "Montant CB");
+  bindMiniKeyboardToInput("trAmount", "money", "Ticket Resto (montant)");
+  bindMiniKeyboardToInput("trCashGiven", "money", "Reste en espèces (donné)");
+
+  function centerRect(){
+    const w = 320, h = 10;
+    const left = (window.innerWidth - w)/2;
+    const top  = (window.innerHeight)/2;
+    return { left, top, right:left+w, bottom: top+h, width:w, height:h };
+  }
+
+  function requireAdminPin(actionLabel="Action admin"){
+    return new Promise((resolve) => {
+      kbd.resolve = (val) => resolve(String(val) === "1701");
+      kbdOpenAtRect(centerRect(), { mode:"pin", title: `${actionLabel} — Code admin`, initial:"", target:null });
+    });
+  }
+
+  function requireCancelReason(){
+    return new Promise((resolve) => {
+      kbd.resolve = (val) => resolve(String(val || "").trim());
+      kbdOpenAtRect(centerRect(), { mode:"text", title:"Raison d'annulation", initial:"", target:null });
+    });
+  }
+
+  /* ======================================================
+     ✅ Mode Rush
+     ====================================================== */
+  function rushBuildPresetChips(){
+    const grid = dom("rushPrefChipGrid");
+    grid.innerHTML = "";
+    RUSH_PRESET_NOTES.forEach((txt) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "rushChip";
+      b.textContent = txt;
+      b.onclick = () => {
+        const i = rushPresetSelected.indexOf(txt);
+        if(i >= 0) rushPresetSelected.splice(i,1);
+        else rushPresetSelected.push(txt);
+        rushRenderPresetState();
+      };
+      grid.appendChild(b);
+    });
+    rushRenderPresetState();
+  }
+
+  function rushRenderPresetState(){
+    const grid = dom("rushPrefChipGrid");
+    grid.querySelectorAll(".rushChip").forEach(btn => {
+      btn.classList.toggle("active", rushPresetSelected.includes(btn.textContent));
+    });
+    dom("rushChosenText").textContent = rushPresetSelected.length ? rushPresetSelected.join(" · ") : "—";
+  }
+
+  function rushClearPresets(){
+    rushPresetSelected = [];
+    rushRenderPresetState();
+  }
+
+  // ✅ Suppléments Rush UI
+  function rushRenderSupState(){
+    dom("rushCheeseQty").textContent = String(rushSup.cheese || 0);
+    dom("rushSteakQty").textContent  = String(rushSup.steak || 0);
+  }
+  function rushClearSup(){
+    rushSup = { cheese: 0, steak: 0 };
+    rushRenderSupState();
+  }
+
+  function applyRushDrinkUI(){
+    const show = (rushPricing !== "alacarte");
+    dom("rushDrinkRow").style.display = show ? "flex" : "none";
+    dom("rushSodaPickWrap").style.display = (show && rushDrinkMode === "soda") ? "block" : "none";
+    dom("rushSodaPick").value = rushSodaPick;
+
+    dom("rushDrinkBtns").querySelectorAll(".rushDrinkBtn").forEach(b => {
+      b.classList.toggle("active", b.dataset.drinkmode === rushDrinkMode);
+    });
+  }
+
+  function applyRushUI(){
+    document.body.classList.toggle("rush", rushOn);
+    dom("btnRush").classList.toggle("active", rushOn);
+    dom("rushPanel").style.display = rushOn ? "block" : "none";
+    if(rushOn) applyRushDrinkUI();
+  }
+
+  function rushClearSelectedBurger(){
+    rushSelectedBurger = "";
+    dom("rushSelectedBurger").textContent = "—";
+    buildRushBurgerGrid();
+  }
+
+  function buildRushBurgerGrid(){
+    const grid = dom("rushBurgerGrid");
+    grid.innerHTML = "";
+    MENU.burgers.forEach(name => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "rushBurgerBtn";
+      b.classList.toggle("selected", rushSelectedBurger === name);
+
+      b.innerHTML = `
+        <div>
+          <div style="font-weight:1300; color: var(--green2)">🍔 ${escapeHtml(name)}</div>
+          <small>${rushPricing === "menu" ? "Menu" : rushPricing === "student" ? "Étudiant" : "À la carte"}</small>
+        </div>
+        <span class="plus">${rushSelectedBurger === name ? "✓ Sélectionné" : "Sélectionner"}</span>
+      `;
+
+      b.onclick = () => {
+        rushSelectedBurger = name;
+        dom("rushSelectedBurger").textContent = name;
+        buildRushBurgerGrid(); // refresh style
+        toast("Burger sélectionné ✅","ok", name);
+      };
+
+      grid.appendChild(b);
+    });
+
+    dom("btnRushAddSelected").disabled = !rushSelectedBurger;
+    dom("rushSelectedBurger").textContent = rushSelectedBurger || "—";
+  }
+
+  function rushSetPricing(mode){
+    rushPricing = mode;
+    dom("pricingMode").value = mode;
+
+    if(mode !== "alacarte"){
+      dom("menuDrinkMode").value = rushDrinkMode;
+      dom("sodaPick").value = rushSodaPick;
+    } else {
+      dom("menuDrinkMode").value = "eau";
+    }
+
+    const wrap = dom("rushModes");
+    wrap.querySelectorAll(".rushModeBtn").forEach(x => x.classList.toggle("active", x.dataset.mode === mode));
+
+    buildRushBurgerGrid();
+    applyRushDrinkUI();
+    syncUI();
+  }
+
+  function rushAddBurger(name){
+    dom("mainName").value = name;
+    dom("pricingMode").value = rushPricing;
+
+    // ✅ appliquer suppléments rush au burger
+    sup = { cheese: rushSup.cheese || 0, steak: rushSup.steak || 0 };
+    dom("cheeseQty").textContent = String(sup.cheese);
+    dom("steakQty").textContent  = String(sup.steak);
+
+    if(rushPricing !== "alacarte"){
+      dom("menuDrinkMode").value = rushDrinkMode;
+      dom("sodaPick").value = rushSodaPick;
+    } else {
+      dom("menuDrinkMode").value = "eau";
+    }
+
+    dom("itemNotes").value = rushPresetSelected.length ? rushPresetSelected.join(" · ") : "";
+    addItem();
+
+    // ✅ clear “one-shot”
+    rushClearPresets();
+    rushClearSup();
+  }
+
+  function initRushPanel(){
+    dom("rushModes").addEventListener("click", (e) => {
+      const btn = e.target.closest(".rushModeBtn");
+      if(!btn) return;
+      rushSetPricing(btn.dataset.mode);
+    });
+
+    dom("rushDrinkBtns").addEventListener("click", (e) => {
+      const btn = e.target.closest(".rushDrinkBtn");
+      if(!btn) return;
+      rushDrinkMode = btn.dataset.drinkmode;
+      if(rushPricing !== "alacarte"){
+        dom("menuDrinkMode").value = rushDrinkMode;
+      }
+      applyRushDrinkUI();
+      syncUI();
+    });
+
+    dom("rushSodaPick").addEventListener("change", () => {
+      rushSodaPick = dom("rushSodaPick").value;
+      dom("sodaPick").value = rushSodaPick;
+      syncUI();
+    });
+
+    // ✅ MODIF 2 : après “Ajouter”, on réinitialise la sélection burger
+    dom("btnRushAddSelected").onclick = () => {
+      if(!rushSelectedBurger){
+        toast("Choisis d'abord un burger 🙂","warn");
+        return;
+      }
+      rushAddBurger(rushSelectedBurger);
+      rushClearSelectedBurger(); // ✅ reset sélection burger + bouton disabled
+    };
+
+    // ✅ Extras Rush
+    const drinkRow = dom("rushExtraDrinkRow");
+    const toggleDrinkRow = (show) => {
+      drinkRow.style.display = show ? "block" : "none";
+    };
+
+    document.querySelectorAll(".rushExtraBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.extra;
+
+        if(key === "drink"){
+          toggleDrinkRow(true);
+          toast("Choisis une boisson 🥤","warn");
+          return;
+        }
+
+        toggleDrinkRow(false);
+        addExtraQuick(key, 1);
+      });
+    });
+
+    dom("rushExtraDrinkBtns").addEventListener("click", (e) => {
+      const b = e.target.closest(".rushExtraDrinkBtn");
+      if(!b) return;
+      const drinkName = b.dataset.drink || "Coca";
+      addExtraQuick("drink", 1, drinkName);
+      toggleDrinkRow(false);
+    });
+
+    dom("rushCheesePlus").onclick  = () => { rushSup.cheese++; rushRenderSupState(); };
+    dom("rushCheeseMinus").onclick = () => { if(rushSup.cheese>0) rushSup.cheese--; rushRenderSupState(); };
+    dom("rushSteakPlus").onclick   = () => { rushSup.steak++; rushRenderSupState(); };
+    dom("rushSteakMinus").onclick  = () => { if(rushSup.steak>0) rushSup.steak--; rushRenderSupState(); };
+    dom("btnRushSupClear").onclick = () => { rushClearSup(); toast("Suppléments effacés","warn"); };
+
+    dom("btnRushNotesClear").onclick = () => {
+      rushClearPresets();
+      toast("Spécificités effacées","warn");
+    };
+
+    rushBuildPresetChips();
+    buildRushBurgerGrid();
+    rushSetPricing("alacarte");
+    rushRenderSupState();
+    toggleDrinkRow(false);
+  }
+
+  /* ======================================================
+     ✅ Encaissement : bouton 💵 sur les commandes
+     ====================================================== */
+  window.togglePaid = (id) => {
+    const o = orders.find(x => x.id === id);
+    if(!o) return;
+    o.paid = !o.paid;
+    saveOrders();
+    renderOrders();
+    renderMiniTodo();
+    toast(o.paid ? "✅ Marquée encaissée" : "💵 Marquée NON encaissée", o.paid ? "ok" : "warn", `#${o.num}`);
+  };
+
+  /* ======================================================
+     ✅ Validation commande + contrôle “espèces insuffisantes”
+     ====================================================== */
+  function validateOrder(){
+    const pay = getPaymentInfo();
+    const totals = getDraftTotals();
+
+    if(pay.method === "cash"){
+      const given = Number(pay.cashGiven || 0);
+      if(given < totals.payable){
+        toast("Espèces insuffisantes ❌","bad", `Donné ${euro(given)} · À payer ${euro(totals.payable)}`);
+        return;
+      }
+    }
+
+    if(pay.method === "tr" && pay.remainderMethod === "cash"){
+      const dueCash = Math.max(0, totals.payable - Number(pay.tr||0));
+      const given = Number(pay.cashGiven || 0);
+      if(given < dueCash){
+        toast("Espèces insuffisantes ❌","bad", `Donné ${euro(given)} · Reste ${euro(dueCash)}`);
+        return;
+      }
+    }
+
+    if(pay.method === "cb_split"){
+      if((pay.card||0) <= 0){ toast("Ajoute au moins une CB 🙂","warn"); return; }
+      if((pay.remainder||0) > 0){ toast("Il reste un montant à payer.","bad"); return; }
+    }
+
+    const order = {
+      id: Date.now(),
+      num: orders.length > 0 ? Math.max(...orders.map(o => o.num)) + 1 : 1,
+      time: nowLabel(),
+      createdAt: Date.now(),
+      status: "todo",
+      itemCount: getDraftItemCount(draft),
+      total: (pay.method === "free") ? 0 : totals.payable,
+      grossTotal: totals.gross,
+      compedValue: (pay.method === "free") ? totals.gross : totals.comped,
+      notes: dom("orderNotes").value || "",
+      payment: pay,
+      data: JSON.parse(JSON.stringify(draft)),
+      paid: false
+    };
+
+    orders.unshift(order);
+    saveOrders();
+    postLive({
+  type: "order",
+  ts: Date.now(),
+  orderId: order.id,
+  num: order.num,
+  status: order.status,
+  total: order.total,
+  paymentMethod: order.payment?.method || "cb",
+  paid: order.paid,
+  itemsCount: order.itemCount
+}).catch(()=>{});
+
+    const sub = (pay.method === "free")
+      ? `#${order.num} · Valeur ${euro(order.grossTotal)} (offert)`
+      : (order.compedValue > 0
+          ? `#${order.num} · À payer ${euro(order.total)} (offert ${euro(order.compedValue)})`
+          : `#${order.num} · ${euro(order.total)}`);
+    toast("Commande validée ✅","ok", sub);
+
+    draft = { items: [], extras: [] };
+    dom("orderNotes").value = "";
+
+    dom("payMethod").value = "cb";
+    dom("cashAmount").value = "";
+    dom("trAmount").value = "";
+    dom("trRemainderMethod").value = "cb";
+    dom("trCashGiven").value = "";
+    dom("trCashGivenWrap").style.display = "none";
+
+    splitCards = [];
+    dom("splitCardAmount").value = "";
+
+    const wrap = dom("payMethods");
+    if(wrap){
+      wrap.querySelectorAll(".payBtn").forEach(b => b.classList.toggle("active", b.dataset.method === "cb"));
+    }
+
+    resetItem();
+    renderDraft();
+    syncUI();
+    setTab("queue");
+  }
+
+  /* ======================================================
+     ✅ Render commandes + bouton 💵 + raison annulation
+     ====================================================== */
+  function minsSince(ts){
+    const m = Math.floor((Date.now() - ts) / 60000);
+    return m < 0 ? 0 : m;
+  }
+
+  function renderOrders(){
+    const tList = dom("todoList");
+    const dList = dom("doneList");
+    tList.innerHTML = ""; dList.innerHTML = "";
+
+    const visible = orders.filter(o => o.status !== "voided");
+
+    visible.forEach(o => {
+      const el = document.createElement("div");
+      el.className = "box";
+
+      const recap = [...(o.data?.items||[]), ...(o.data?.extras||[])]
+        .map(i => {
+          const tag = i.comped ? ` <span class="tag giftline">🎁 Offert</span>` : "";
+          const meta = i.meta ? ` ${escapeHtml(i.meta)}` : "";
+          const notes = i.notes ? ` <span class="small">📝 ${escapeHtml(i.notes)}</span>` : "";
+          return `<div>• ${i.qty}x ${escapeHtml(i.label)}${meta}${tag}${notes}</div>`;
+        }).join("");
+
+      const timeTag =
+        (o.status === "todo" && o.createdAt)
+          ? `<span class="tag warn">⏱ ${minsSince(o.createdAt)} min</span>`
+          : (o.status === "done" && typeof o.durationMin === "number")
+            ? `<span class="tag ok">⏱ Fait en ${o.durationMin} min</span>`
+            : "";
+
+      const isCancel = (o.status === "cancel") || (o.payment?.method === "cancel");
+      const cancelTag = isCancel ? `<span class="tag cancel">⛔ Annulation</span>` : "";
+      const cancelReasonTag = (isCancel && o.voidReason)
+        ? `<span class="tag cancel">📝 ${escapeHtml(o.voidReason)}</span>`
+        : "";
+
+      const giftTag = (!isCancel && (o.payment?.method === "free" || Number(o.compedValue||0) > 0))
+        ? `<span class="tag gift">🎁 Offert ${euro(o.compedValue || o.grossTotal || 0)}</span>`
+        : "";
+
+      const paidTag = (!isCancel && o.payment?.method !== "free")
+        ? (o.paid ? `<span class="tag ok">✅ Encaissé</span>` : `<span class="tag warn">💵 NON encaissé</span>`)
+        : "";
+
+      const metaLine = isCancel
+        ? `${cancelTag}${cancelReasonTag}`
+        : `
+          ${timeTag}
+          ${paidTag}
+          <span class="tag">${escapeHtml(paymentLabel(o.payment))}</span>
+          <span class="tag">🧾 ${o.itemCount || 0} items</span>
+          ${giftTag}
+          <span class="tag">💳 ${escapeHtml(paymentDetails(o.payment))}</span>
+        `;
+
+      const moneyShown = euro(o.total);
+      const grossInfo = (!isCancel && Number(o.compedValue||0) > 0) ? ` <span class="small">(valeur ${euro(o.grossTotal||0)})</span>` : "";
+
+      const paidBtn = (!isCancel && o.payment?.method !== "free")
+        ? `<button class="miniBtn ${o.paid ? '' : 'edit-btn'}" type="button" onclick="window.togglePaid(${o.id})">${o.paid ? "💵 Encaissé" : "💵 À encaisser"}</button>`
+        : ``;
+
+      el.innerHTML = `
+        <div class="boxTitle">
+          #${o.num} — ${escapeHtml(o.time)}
+          <span class="money" style="float:right">${moneyShown}${grossInfo}</span>
+        </div>
+
+        <div class="boxMeta" style="margin-top:6px; display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+          ${metaLine}
+        </div>
+
+        <div class="bigRecap">${recap || "—"}</div>
+        ${o.notes ? `<div class="boxMeta">📝 ${escapeHtml(o.notes)}</div>` : ""}
+
+        <div class="btnbar">
+          ${paidBtn}
+          ${o.status === 'todo' ? `
+            <button class="primary" type="button" onclick="window.setStat(${o.id}, 'done')">✅ Prêt</button>
+            <button class="edit-btn" type="button" onclick="window.editO(${o.id})">✏️ Modif</button>
+            <button class="danger" type="button" onclick="window.cancelO(${o.id})">Annuler</button>
+          ` : (o.status === "done" ? `
+            <button type="button" onclick="window.setStat(${o.id}, 'todo')">↩️ Refaire</button>
+            <button class="danger" type="button" onclick="window.cancelO(${o.id})">Annuler</button>
+          ` : ``)}
+        </div>
+      `;
+
+      if(o.status === "todo") tList.appendChild(el);
+      else dList.appendChild(el);
+    });
+
+    renderStats();
+    renderMiniTodo();
+  }
+
+  /* ======================================================
+     ✅ Mini Todo
+     ====================================================== */
+  function renderMiniTodo(){
+    const wrap = dom("miniTodoList");
+    if(!wrap) return;
+    wrap.innerHTML = "";
+
+    const todos = orders
+      .filter(o => o.status === "todo")
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0))
+      .slice(0,6);
+
+    if(!todos.length){
+      const empty = document.createElement("div");
+      empty.className = "miniItem";
+      empty.innerHTML = `
+        <div class="miniTitle">
+          <span>✅ Rien à faire</span>
+          <span class="chip">0</span>
+        </div>
+        <div class="muted">Aucune commande en attente.</div>
+      `;
+      wrap.appendChild(empty);
+      return;
+    }
+
+    const cleanLabel = (s) => String(s || "").replace(/^🍔\s*/,"").replace(/^✨\s*/,"");
+
+    const groupLines = (lines) => {
+      const m = new Map();
+      lines.forEach(i => {
+        const qty = Number(i.qty || 0);
+        const label = cleanLabel(i.label);
+        const meta  = String(i.meta || "");
+        const notes = String(i.notes || "");
+        const comped = i.comped ? "1" : "0";
+
+        const key = [label, meta, notes, comped].join("||");
+        const prev = m.get(key) || { qty: 0, label, meta, notes, comped: (comped==="1") };
+        prev.qty += qty;
+        m.set(key, prev);
+      });
+
+      return [...m.values()].sort((a,b)=> (b.qty - a.qty));
+    };
+
+    const clampLocal = (n, a, b) => Math.max(a, Math.min(b, n));
+
+    todos.forEach(o => {
+      const el = document.createElement("div");
+      el.className = "miniItem";
+
+      const age = minsSince(o.createdAt);
+      const urgency = age >= 12 ? "warn" : "";
+      const progress = clampLocal((age / 18) * 100, 8, 100);
+
+      const paidChip = (o.payment?.method !== "free")
+        ? (o.paid ? `<span class="chip">✅ Encaissé</span>` : `<span class="chip warn">💵 NON encaissé</span>`)
+        : "";
+
+      const grouped = groupLines([...(o.data?.items||[]), ...(o.data?.extras||[])]);
+      const lines = grouped
+        .slice(0,6)
+        .map(x => {
+          const base = `${x.qty}x ${x.label}`;
+          const meta = x.meta ? ` — <span class="small">${escapeHtml(x.meta)}</span>` : "";
+          const gift = x.comped ? ` <span class="small">🎁 Offert</span>` : "";
+          const notes = x.notes ? ` <span class="small">📝 ${escapeHtml(x.notes)}</span>` : "";
+          return `${escapeHtml(base)}${meta}${gift}${notes}`;
+        }).join("<br>");
+
+      el.innerHTML = `
+        <div class="miniTitle">
+          <span>#${o.num}</span>
+          <span class="money">${euro(o.total)}</span>
+        </div>
+
+        <div class="miniChips">
+          <span class="chip ${urgency}">⏱ ${age} min</span>
+          ${paidChip}
+          <span class="chip">🧾 ${o.itemCount || 0} items</span>
+          <span class="chip">💳 ${escapeHtml(paymentLabel(o.payment))}</span>
+        </div>
+
+        <div class="miniLines">${lines || "—"}</div>
+
+        <div class="miniProgress" aria-label="Ancienneté">
+          <span style="width:${progress}%"></span>
+        </div>
+      `;
+      wrap.appendChild(el);
+    });
+  }
+
+  window.setStat = (id, s) => {
+    const o = orders.find(x => x.id === id);
+    if(!o) return;
+
+    o.status = s;
+
+    if(s === "done"){
+      o.completedAt = Date.now();
+      o.durationMin = o.createdAt ? Math.max(0, Math.floor((o.completedAt - o.createdAt) / 60000)) : 0;
+      toast("Marquée prête ✅","ok");
+    }
+    if(s === "todo"){
+      delete o.completedAt;
+      delete o.durationMin;
+      toast("Remise à faire ↩️","warn");
+    }
+
+    saveOrders();
+    renderOrders();
+  };
+
+  async function cancelOrder(id){
+    const o = orders.find(x => x.id === id);
+    if(!o) return;
+
+    const ok = await requireAdminPin("Annulation de commande");
+    if(!ok){
+      toast("Code admin incorrect.","bad");
+      return;
+    }
+
+    const reason = await requireCancelReason();
+    if(!reason){
+      toast("Raison obligatoire.","bad");
+      return;
+    }
+
+    const wasDone = (o.status === "done");
+
+    o.status = "voided";
+    o.voidedAt = Date.now();
+    o.voidReason = String(reason).slice(0,120);
+
+    if(wasDone){
+      const negData = JSON.parse(JSON.stringify(o.data || {items:[], extras:[]}));
+      [...(negData.items||[]), ...(negData.extras||[])].forEach(line => {
+        line.qty = -Math.abs(Number(line.qty || 0));
+      });
+
+      const op = o.payment || {};
+      const negPayment = {
+        method: "cancel",
+        card: -Math.abs(Number(op.card || 0)),
+        cash: -Math.abs(Number(op.cash || 0)),
+        tr:   -Math.abs(Number(op.tr || 0)),
+      };
+
+      const cancelTicket = {
+        id: Date.now() + Math.random(),
+        num: o.num,
+        time: nowLabel(),
+        createdAt: Date.now(),
+        status: "cancel",
+        total: -Math.abs(Number(o.total || 0)),
+        grossTotal: -Math.abs(Number(o.grossTotal || o.total || 0)),
+        compedValue: 0,
+        notes: (o.notes || ""),
+        payment: negPayment,
+        data: negData,
+        cancelOf: o.id,
+        voidReason: o.voidReason,
+        voidedAt: o.voidedAt,
+        cancelNoCA: false,
+        itemCount: o.itemCount || 0,
+        paid: true
+      };
+
+      orders.unshift(cancelTicket);
+      toast("Commande annulée ⛔","warn", `#${o.num} · PERTE (commande prête)`);
+    } else {
+      const cancelTicket0 = {
+        id: Date.now() + Math.random(),
+        num: o.num,
+        time: nowLabel(),
+        createdAt: Date.now(),
+        status: "cancel",
+        total: 0,
+        grossTotal: 0,
+        compedValue: 0,
+        notes: (o.notes || ""),
+        payment: { method: "cancel", card: 0, cash: 0, tr: 0 },
+        data: JSON.parse(JSON.stringify(o.data || {items:[], extras:[]})),
+        cancelOf: o.id,
+        voidReason: o.voidReason,
+        voidedAt: o.voidedAt,
+        cancelNoCA: true,
+        itemCount: o.itemCount || 0,
+        paid: true
+      };
+
+      orders.unshift(cancelTicket0);
+      toast("Commande annulée ⛔","warn", `#${o.num} · CA inchangé (non prête)`);
+    }
+
+    saveOrders();
+    renderOrders();
+    renderMiniTodo();
+    renderStats();
+  }
+
+  function getOrdersForStats(){
+    return orders.filter(o => o.status !== "voided" && !(o.status === "cancel" && o.cancelNoCA === true));
+  }
+
+  function renderStats(){
+    const visible = getOrdersForStats();
+    const count = visible.length;
+
+    let cashTotal = 0, cbTotal = 0, trTotal = 0;
+
+    const byProductQty = new Map();
+    const byProductRev = new Map();
+    const donePrepTimes = [];
+
+    visible.forEach(o => {
+      const p = o.payment || {};
+      cashTotal += Number(p.cash||0);
+      cbTotal += Number(p.card||0);
+      trTotal += Number(p.tr||0);
+
+      const lines = [...(o.data?.items||[]), ...(o.data?.extras||[])];
+      lines.forEach(line => {
+        const label = line.label || "—";
+        const qty = Number(line.qty||0);
+        const price = Number(line.price||0);
+        const lineRev = qty * price;
+        byProductQty.set(label, (byProductQty.get(label)||0) + qty);
+        byProductRev.set(label, (byProductRev.get(label)||0) + lineRev);
+      });
+
+      if(o.status === "done" && typeof o.durationMin === "number") donePrepTimes.push(o.durationMin);
+    });
+
+    const revenue = cbTotal + cashTotal + trTotal;
+    const average = count > 0 ? (revenue / count) : 0;
+
+    dom("statCount").textContent = count;
+    dom("statAverage").textContent = euro(average);
+
+    dom("statCB").textContent = euro(cbTotal);
+    dom("statCash").textContent = euro(cashTotal);
+    dom("statTR").textContent = euro(trTotal);
+    dom("statRevenue").textContent = euro(revenue);
+
+    const topArr = [...byProductQty.entries()].sort((a,b)=>b[1]-a[1]);
+    if(topArr.length){
+      const [topName, topQty] = topArr[0];
+      const topRev = byProductRev.get(topName)||0;
+      dom("statTopProduct").textContent = `${topName} — x${topQty}`;
+      dom("statTopProductMeta").textContent = `Valeur générée : ${euro(topRev)}`;
+    } else {
+      dom("statTopProduct").textContent = "—";
+      dom("statTopProductMeta").textContent = "";
+    }
+
+    const top5 = topArr.slice(0,5);
+    dom("statTop5").innerHTML = top5.map(([name,qty]) => {
+      const rev = byProductRev.get(name)||0;
+      return `<li>${escapeHtml(name)} — x${qty} <span class="small">(${euro(rev)})</span></li>`;
+    }).join("") || `<li>—</li>`;
+
+    const paidTotal = revenue;
+    const pctMoney = (amt) => paidTotal ? Math.round((amt * 100) / paidTotal) : 0;
+    dom("statPaySplit").textContent =
+      `CB ${pctMoney(cbTotal)}% · Espèces ${pctMoney(cashTotal)}% · TR ${pctMoney(trTotal)}%`;
+
+    let usedCB = 0, usedCash = 0, usedTR = 0;
+    visible.forEach(o => {
+      const p = o.payment || {};
+      if(Number(p.card || 0) > 0) usedCB++;
+      if(Number(p.cash || 0) > 0) usedCash++;
+      if(Number(p.tr || 0) > 0) usedTR++;
+    });
+
+    const pctCount = (n) => count ? Math.round((n * 100) / count) : 0;
+    dom("statPaySplitCount").textContent =
+      `CB ${pctCount(usedCB)}% · Espèces ${pctCount(usedCash)}% · TR ${pctCount(usedTR)}%`;
+
+    if(donePrepTimes.length){
+      const avgPrep = Math.round(donePrepTimes.reduce((s,x)=>s+x,0) / donePrepTimes.length);
+      dom("statPrep").textContent = `${avgPrep} min`;
+      dom("statPrepAvg").textContent = `${avgPrep} min`;
+      dom("statPrepMeta").textContent = `Basé sur ${donePrepTimes.length} commande(s) “Faites”`;
+    } else {
+      dom("statPrep").textContent = "—";
+      dom("statPrepAvg").textContent = "—";
+      dom("statPrepMeta").textContent = "Basé sur les commandes “Faites”";
+    }
+  }
+
+  function setTab(t){
+    currentTab = t;
+    dom("viewNew").style.display = (t === "new") ? "block" : "none";
+    dom("viewQueue").style.display = (t === "queue") ? "block" : "none";
+    dom("viewClose").style.display = (t === "close") ? "block" : "none";
+
+    dom("tabNew").classList.toggle("active", t === "new");
+    dom("tabQueue").classList.toggle("active", t === "queue");
+    dom("tabClose").classList.toggle("active", t === "close");
+
+    if(t === "queue") renderOrders();
+    if(t === "close") renderStats();
+    if(t === "new") renderMiniTodo();
+  }
+
+  function showCasino(revenue, onDone){
+    const overlay = dom("casinoOverlay");
+    const gainEl  = dom("casinoGain");
+    const msgEl   = dom("casinoMsg");
+    const okBtn   = dom("btnCasinoOk");
+
+    const messages = [
+      "💥 JACKPOT ! Service validé, GG ",
+      "🎉 GG ! Ça sent la journée rentable :)",
+      "🔥 Encore un service comme ça et on ouvre 2 foodtrucks David !",
+      "Bien joué D & H 🤭, futurs millionaires inchallah 😉",
+      "🤑 Le burger game est solide sa meeere "
+    ];
+    msgEl.textContent = messages[Math.floor(Math.random()*messages.length)];
+
+    overlay.style.display = "flex";
+
+    const start = 0;
+    const end = Math.max(0, Number(revenue||0));
+    const duration = 1400;
+    const t0 = performance.now();
+
+    gainEl.style.transform = "scale(1)";
+    gainEl.style.filter = "drop-shadow(0 0 0 rgba(196,138,58,0))";
+
+    function easeOutCubic2(t){ return 1 - Math.pow(1-t, 3); }
+
+    function tick(now){
+      const p = Math.min(1, (now - t0) / duration);
+      const e = easeOutCubic2(p);
+      const wobble = (p > 0.75) ? (Math.sin((now - t0) / 40) * (1-p) * 6) : 0;
+
+      const val = start + (end - start) * e;
+      gainEl.textContent = euro(val);
+
+      gainEl.style.transform = `scale(${1 + e*0.12}) translateY(${wobble}px)`;
+      gainEl.style.filter = `drop-shadow(0 0 ${8 + e*18}px rgba(196,138,58,${0.15 + e*0.55}))`;
+
+      if(p < 1) requestAnimationFrame(tick);
+      else {
+        gainEl.textContent = euro(end);
+        gainEl.style.transform = "scale(1.16)";
+        setTimeout(()=> gainEl.style.transform = "scale(1.08)", 120);
+        confettiBoom(2600);
+      }
+    }
+    requestAnimationFrame(tick);
+
+    okBtn.onclick = () => {
+      overlay.style.display = "none";
+      stopConfetti();
+      if(typeof onDone === "function") onDone();
+    };
+  }
+
+  /* ===== Paiement buttons ===== */
+  (() => {
+    const wrap = dom("payMethods");
+    wrap.addEventListener("click", (e) => {
+      const btn = e.target.closest(".payBtn");
+      if(!btn) return;
+
+      const method = btn.dataset.method;
+      dom("payMethod").value = method;
+
+      wrap.querySelectorAll(".payBtn").forEach(b => b.classList.toggle("active", b === btn));
+
+      if(method !== "cb_split"){
+        splitCards = [];
+        dom("splitCardAmount").value = "";
+      }
+
+      syncUI();
+    });
+  })();
+
+  /* ===== Mode Rush toggle ===== */
+  dom("btnRush").onclick = () => {
+    rushOn = !rushOn;
+    localStorage.setItem(RUSH_KEY, rushOn ? "1" : "0");
+    applyRushUI();
+    toast(rushOn ? "🔥 Mode Rush activé" : "Mode Rush désactivé", rushOn ? "warn" : "ok");
+    if(rushOn) setTab("new");
+  };
+
+  /* ===== Events ===== */
+
+  // Tabs
+  dom("tabNew").onclick   = () => setTab("new");
+  dom("tabQueue").onclick = () => setTab("queue");
+  dom("tabClose").onclick = () => setTab("close");
+
+  // Composer item (normal)
+  dom("btnAddItem").onclick = addItem;
+
+  dom("cheesePlus").onclick  = () => { sup.cheese++; dom("cheeseQty").textContent = String(sup.cheese); syncUI(); };
+  dom("cheeseMinus").onclick = () => { if(sup.cheese>0) sup.cheese--; dom("cheeseQty").textContent = String(sup.cheese); syncUI(); };
+
+  dom("steakPlus").onclick  = () => { sup.steak++; dom("steakQty").textContent = String(sup.steak); syncUI(); };
+  dom("steakMinus").onclick = () => { if(sup.steak>0) sup.steak--; dom("steakQty").textContent = String(sup.steak); syncUI(); };
+
+  // ✅ MODIF 1 : click sur boutons boisson (mode normal)
+  dom("menuDrinkBtns").addEventListener("click", (e) => {
+    const btn = e.target.closest(".rushDrinkBtn");
+    if(!btn) return;
+
+    const isMenu = dom("pricingMode").value !== "alacarte";
+    if(!isMenu) return;
+
+    dom("menuDrinkMode").value = btn.dataset.drinkmode;
+    dom("menuDrinkMode").dispatchEvent(new Event("change", {bubbles:true}));
+    syncUI();
+  });
+
+  dom("pricingMode").addEventListener("change", syncUI);
+  dom("menuDrinkMode").addEventListener("change", syncUI);
+  dom("sodaPick").addEventListener("change", syncUI);
+
+  // Extras (normal)
+  dom("extraPlus").onclick  = () => { extraQtyValue++; dom("extraQtyDisplay").textContent = String(extraQtyValue); };
+  dom("extraMinus").onclick = () => { if(extraQtyValue>1) extraQtyValue--; dom("extraQtyDisplay").textContent = String(extraQtyValue); };
+
+  dom("extraSelect").addEventListener("change", syncUI);
+  dom("btnAddExtra").onclick = addExtra;
+
+  // Paiement inputs -> recalc
+  ["cashAmount","trAmount","trCashGiven","trRemainderMethod"].forEach(id=>{
+    const el = dom(id);
+    if(el) el.addEventListener("input", updatePaymentCalc);
+    if(el) el.addEventListener("change", updatePaymentCalc);
+  });
+
+  // CB divisé : ajouter une carte
+  dom("btnAddSplitCard").onclick = () => {
+    const val = Math.max(0, Number(dom("splitCardAmount").value || 0));
+    if(!val){ toast("Entre un montant CB 🙂","warn"); return; }
+    splitCards.push({ amount: val });
+    dom("splitCardAmount").value = "";
+    updatePaymentCalc();
+  };
+
+  // Valider / annuler commande en cours
+  dom("btnValidateOrder").onclick = validateOrder;
+
+  dom("btnCancelOrder").onclick = async () => {
+    const ok = await requireAdminPin("Annuler la commande en cours");
+    if(!ok){ toast("Code admin incorrect.","bad"); return; }
+
+    draft = { items: [], extras: [] };
+    dom("orderNotes").value = "";
+    splitCards = [];
+    dom("splitCardAmount").value = "";
+
+    dom("payMethod").value = "cb";
+    dom("cashAmount").value = "";
+    dom("trAmount").value = "";
+    dom("trRemainderMethod").value = "cb";
+    dom("trCashGiven").value = "";
+
+    const wrap = dom("payMethods");
+    wrap.querySelectorAll(".payBtn").forEach(b => b.classList.toggle("active", b.dataset.method === "cb"));
+
+    resetItem();
+    renderDraft();
+    syncUI();
+    toast("Commande en cours annulée","warn");
+  };
+
+  // Export CSV
+  function exportCSV(){
+    const visible = getOrdersForStats();
+
+    const escapeCSV = (v) => {
+      const s = String(v ?? "");
+      if(/[",\n;]/.test(s)) return `"${s.replaceAll('"','""')}"`;
+      return s;
+    };
+
+    const rows = [];
+    rows.push([
+      "num","time","status",
+      "total_payable","gross_total","comped_value",
+      "payment_method","payment_details",
+      "paid",
+      "items_count",
+      "order_notes",
+      "lines"
+    ]);
+
+    visible.forEach(o => {
+      const lines = [...(o.data?.items||[]), ...(o.data?.extras||[])].map(l => {
+        const qty = l.qty ?? 0;
+        const label = (l.label || "").replace(/^🍔\s*/,"").replace(/^✨\s*/,"");
+        const meta = l.meta ? ` (${l.meta})` : "";
+        const notes = l.notes ? ` [${l.notes}]` : "";
+        const gift = l.comped ? " {OFFERT}" : "";
+        return `${qty}x ${label}${meta}${notes}${gift}`;
+      }).join(" | ");
+
+      rows.push([
+        o.num,
+        o.time,
+        o.status,
+        (Number(o.total||0)).toFixed(2).replace(".", ","),
+        (Number(o.grossTotal||0)).toFixed(2).replace(".", ","),
+        (Number(o.compedValue||0)).toFixed(2).replace(".", ","),
+        paymentLabel(o.payment),
+        paymentDetails(o.payment),
+        o.paid ? "1" : "0",
+        o.itemCount || 0,
+        o.notes || "",
+        lines
+      ]);
+    });
+
+    const csv = rows.map(r => r.map(escapeCSV).join(";")).join("\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `msb_export_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 800);
+    toast("Export CSV prêt ✅","ok");
+  }
+
+  /* ======================================================
+     ✅ Modifier une commande (simple : recharger en “commande en cours”)
+     ====================================================== */
+  window.editO = async (id) => {
+    const o = orders.find(x => x.id === id);
+    if(!o) return;
+
+    // Optionnel: verrou admin pour modifier
+    const ok = await requireAdminPin("Modifier une commande");
+    if(!ok){ toast("Code admin incorrect.","bad"); return; }
+
+    // Recharge la commande en cours
+    draft = JSON.parse(JSON.stringify(o.data || {items:[], extras:[]}));
+    dom("orderNotes").value = o.notes || "";
+
+    // reset paiements UI (on ne réplique pas forcément l’ancien détail)
+    splitCards = [];
+    dom("splitCardAmount").value = "";
+
+    dom("payMethod").value = "cb";
+    dom("cashAmount").value = "";
+    dom("trAmount").value = "";
+    dom("trRemainderMethod").value = "cb";
+    dom("trCashGiven").value = "";
+
+    const wrap = dom("payMethods");
+    wrap.querySelectorAll(".payBtn").forEach(b => b.classList.toggle("active", b.dataset.method === "cb"));
+
+    setTab("new");
+    renderDraft();
+    syncUI();
+    toast("Commande chargée pour modification ✏️","ok", `#${o.num}`);
+  };
+
+  // alias (tes boutons appellent window.cancelO)
+  window.cancelO = (id) => cancelOrder(id);
+
+  /* ======================================================
+     ✅ Clôture service
+     ====================================================== */
+  async function closeService(){
+    const ok = await requireAdminPin("Clôturer le service");
+    if(!ok){ toast("Code admin incorrect.","bad"); return; }
+
+    // Revenue du service basé sur stats (encaissement)
+    const visible = getOrdersForStats();
+    let cashTotal = 0, cbTotal = 0, trTotal = 0;
+    visible.forEach(o => {
+      const p = o.payment || {};
+      cashTotal += Number(p.cash||0);
+      cbTotal += Number(p.card||0);
+      trTotal += Number(p.tr||0);
+    });
+    const revenue = cbTotal + cashTotal + trTotal;
+
+    showCasino(revenue, () => {
+      // Reset total (tu peux choisir de garder l’historique sinon)
+      localStorage.removeItem(STORAGE_KEY);
+      orders = [];
+      draft = { items: [], extras: [] };
+      sup = { cheese: 0, steak: 0 };
+      splitCards = [];
+
+      // reset UI
+      dom("orderNotes").value = "";
+      dom("itemNotes").value = "";
+      dom("cashAmount").value = "";
+      dom("trAmount").value = "";
+      dom("trCashGiven").value = "";
+      dom("splitCardAmount").value = "";
+
+      dom("payMethod").value = "cb";
+      const wrap = dom("payMethods");
+      wrap.querySelectorAll(".payBtn").forEach(b => b.classList.toggle("active", b.dataset.method === "cb"));
+
+      renderDraft();
+      renderOrders();
+      renderStats();
+      renderMiniTodo();
+      syncUI();
+
+      toast("Service clôturé ✅","ok", `CA: ${euro(revenue)}`);
+      setTab("new");
+    });
+  }
+
+  /* ======================================================
+     ✅ Wire boutons Service
+     ====================================================== */
+  dom("btnExport").onclick = exportCSV;
+  dom("btnCloseService").onclick = closeService;
+
+  /* ======================================================
+     ✅ INIT
+     ====================================================== */
+  function init(){
+    fillBurgerNames();
+    initRushPanel();
+    applyRushUI();
+
+    renderDraft();
+    renderOrders();
+    renderStats();
+    renderMiniTodo();
+    syncUI();
+
+    // Si page reload => revenir sur l’onglet New
+    setTab("new");
+  }
+
+  init();
+
+})(); 
+</script>
+
+</body>
+</html>
