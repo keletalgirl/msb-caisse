@@ -1326,10 +1326,12 @@
   const LIVE_URL = "https://script.google.com/macros/s/AKfycbyo1mKET4MrkJGu6e-G-n2ZmxFQj2phNS7gi1CsvneIyXeeipuCzKF4WqJWC1qgNxd42Q/exec";
 
 async function postLive(payload){
-  await fetch(LIVE_URL, {
-    method:"POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
+  const form = new URLSearchParams();
+  form.append("data", JSON.stringify(payload));
+
+  return fetch(LIVE_URL, {
+    method: "POST",
+    body: form
   });
 }
   const ADMIN_PIN = "1701";
