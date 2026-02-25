@@ -2451,7 +2451,7 @@ async function postLive(payload){
       notes: dom("orderNotes").value || "",
       payment: pay,
       data: JSON.parse(JSON.stringify(draft)),
-      paid: false
+      paid: (pay.method !== "cancel"),
     };
 
     orders.unshift(order);
@@ -3255,3 +3255,4 @@ async function postLive(payload){
 
 </body>
 </html>
+
